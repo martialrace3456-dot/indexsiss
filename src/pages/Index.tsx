@@ -178,7 +178,7 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-board p-4">
       <div className="max-w-7xl mx-auto space-y-4">
         {/* Header */}
-        <Card className="p-4 bg-card border-primary">
+        <Card className="p-4 bg-card border-2 border-primary shadow-lg shadow-primary/20">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-foreground">
@@ -238,7 +238,7 @@ const Index = () => {
 
           {/* Side Panel */}
           <div className="space-y-4">
-            {(gameState.phase === "sampling" || gameState.phase === "reveal") && (
+            {(gameState.phase === "sampling" || gameState.phase === "guessing" || gameState.phase === "reveal") && (
               <Card className="p-4 bg-card border-primary">
                 <SampleInfo
                   samples={gameState.currentRoundData.samples || []}

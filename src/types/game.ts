@@ -17,7 +17,6 @@ export interface RoundData {
   actualDensity: number;
   standardDeviation: number;
   score: number;
-  sampleRadius: number;
 }
 
 export interface GameState {

@@ -27,6 +27,9 @@ const Index = () => {
     const dots = generateDotsWithVariableDensity(TOTAL_DOTS, BOARD_SIZE);
     const actualDensity = calculateActualDensity(TOTAL_DOTS, BOARD_SIZE);
     const standardDeviation = calculateStandardDeviation(dots, BOARD_SIZE);
+    const minRadius = BOARD_SIZE * 0.05;
+    const maxRadius = BOARD_SIZE * 0.15;
+    const sampleRadius = minRadius + Math.random() * (maxRadius - minRadius);
 
     return {
       currentPlayer: 1,
@@ -43,6 +46,7 @@ const Index = () => {
         actualDensity,
         standardDeviation,
         score: 0,
+        sampleRadius,
       },
     };
   });
@@ -51,9 +55,7 @@ const Index = () => {
     if (gameState.phase !== "sampling" || gameState.samplesRemaining <= 0)
       return;
 
-    const minRadius = BOARD_SIZE * 0.05;
-    const maxRadius = BOARD_SIZE * 0.15;
-    const radius = minRadius + Math.random() * (maxRadius - minRadius);
+    const radius = gameState.currentRoundData.sampleRadius || BOARD_SIZE * 0.1;
 
     const localDensity = calculateLocalDensity(
       gameState.dots,
@@ -92,6 +94,7 @@ const Index = () => {
       actualDensity: gameState.currentRoundData.actualDensity!,
       standardDeviation: gameState.currentRoundData.standardDeviation!,
       score,
+      sampleRadius: gameState.currentRoundData.sampleRadius || BOARD_SIZE * 0.1,
     };
 
     setGameState({
@@ -121,6 +124,9 @@ const Index = () => {
     const dots = generateDotsWithVariableDensity(TOTAL_DOTS, BOARD_SIZE);
     const actualDensity = calculateActualDensity(TOTAL_DOTS, BOARD_SIZE);
     const standardDeviation = calculateStandardDeviation(dots, BOARD_SIZE);
+    const minRadius = BOARD_SIZE * 0.05;
+    const maxRadius = BOARD_SIZE * 0.15;
+    const sampleRadius = minRadius + Math.random() * (maxRadius - minRadius);
 
     setGameState({
       ...gameState,
@@ -133,6 +139,7 @@ const Index = () => {
         actualDensity,
         standardDeviation,
         score: 0,
+        sampleRadius,
       },
     });
   };
@@ -141,6 +148,9 @@ const Index = () => {
     const dots = generateDotsWithVariableDensity(TOTAL_DOTS, BOARD_SIZE);
     const actualDensity = calculateActualDensity(TOTAL_DOTS, BOARD_SIZE);
     const standardDeviation = calculateStandardDeviation(dots, BOARD_SIZE);
+    const minRadius = BOARD_SIZE * 0.05;
+    const maxRadius = BOARD_SIZE * 0.15;
+    const sampleRadius = minRadius + Math.random() * (maxRadius - minRadius);
 
     setGameState({
       currentPlayer: 1,
@@ -157,6 +167,7 @@ const Index = () => {
         actualDensity,
         standardDeviation,
         score: 0,
+        sampleRadius,
       },
     });
   };

@@ -14,20 +14,17 @@ export const GameComplete = ({ rounds, onNewGame }: GameCompleteProps) => {
   const player1Total = player1Rounds.reduce((sum, r) => sum + r.score, 0);
   const player2Total = player2Rounds.reduce((sum, r) => sum + r.score, 0);
 
-  const winner =
-    player1Total > player2Total ? 1 : player1Total < player2Total ? 2 : null;
+  const winner = player1Total >= 50 ? 1 : player2Total >= 50 ? 2 : null;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-board p-4">
       <Card className="p-8 bg-card border-primary max-w-2xl w-full space-y-6">
         <div className="text-center space-y-2">
-          <h2 className="text-4xl font-bold text-foreground">Game Complete!</h2>
-          {winner ? (
+          <h2 className="text-4xl font-bold text-foreground">Victory!</h2>
+          {winner && (
             <p className="text-xl text-muted-foreground">
-              Player {winner} Wins!
+              Player {winner} reached 50 points first!
             </p>
-          ) : (
-            <p className="text-xl text-muted-foreground">It's a Tie!</p>
           )}
         </div>
 

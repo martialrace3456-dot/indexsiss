@@ -5,9 +5,10 @@ import { Card } from "@/components/ui/card";
 
 interface GuessInputProps {
   onSubmit: (guess: number) => void;
+  disabled?: boolean;
 }
 
-export const GuessInput = ({ onSubmit }: GuessInputProps) => {
+export const GuessInput = ({ onSubmit, disabled = false }: GuessInputProps) => {
   const [guess, setGuess] = useState("");
   const [error, setError] = useState("");
 
@@ -44,6 +45,7 @@ export const GuessInput = ({ onSubmit }: GuessInputProps) => {
           value={guess}
           onChange={(e) => setGuess(e.target.value)}
           placeholder="0.000000"
+          disabled={disabled}
           className="font-mono text-lg bg-input border-border focus:border-primary"
         />
         {error && <p className="text-sm text-destructive">{error}</p>}
@@ -51,6 +53,7 @@ export const GuessInput = ({ onSubmit }: GuessInputProps) => {
 
       <Button
         onClick={handleSubmit}
+        disabled={disabled}
         className="w-full bg-gradient-accent hover:opacity-90 text-primary-foreground font-semibold text-lg py-6"
       >
         Submit Guess

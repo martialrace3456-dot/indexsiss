@@ -18,15 +18,21 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 const BOARD_SIZE = 1000;
-const TOTAL_DOTS = 300000;
+const MIN_DOTS = 200000;
+const MAX_DOTS = 400000;
 const SAMPLES_PER_ROUND = 5;
 const WINNING_SCORE = 50;
 const SAMPLE_RADIUS = BOARD_SIZE / (5 * Math.sqrt(Math.PI)); // 1/25th of board area
 
+const generateRandomDotCount = () => {
+  return Math.floor(MIN_DOTS + Math.random() * (MAX_DOTS - MIN_DOTS));
+};
+
 const Index = () => {
   const [gameState, setGameState] = useState<GameState>(() => {
-    const dots = generateDotsWithVariableDensity(TOTAL_DOTS, BOARD_SIZE);
-    const actualDensity = calculateActualDensity(TOTAL_DOTS, BOARD_SIZE);
+    const totalDots = generateRandomDotCount();
+    const dots = generateDotsWithVariableDensity(totalDots, BOARD_SIZE);
+    const actualDensity = calculateActualDensity(totalDots, BOARD_SIZE);
     const standardDeviation = calculateStandardDeviation(dots, BOARD_SIZE);
 
     return {
@@ -35,7 +41,7 @@ const Index = () => {
       phase: "sampling",
       dots,
       boardSize: BOARD_SIZE,
-      totalDots: TOTAL_DOTS,
+      totalDots,
       samplesRemaining: SAMPLES_PER_ROUND,
       rounds: [],
       currentRoundData: {
@@ -126,14 +132,16 @@ const Index = () => {
   };
 
   const handleHandoffReady = () => {
-    const dots = generateDotsWithVariableDensity(TOTAL_DOTS, BOARD_SIZE);
-    const actualDensity = calculateActualDensity(TOTAL_DOTS, BOARD_SIZE);
+    const totalDots = generateRandomDotCount();
+    const dots = generateDotsWithVariableDensity(totalDots, BOARD_SIZE);
+    const actualDensity = calculateActualDensity(totalDots, BOARD_SIZE);
     const standardDeviation = calculateStandardDeviation(dots, BOARD_SIZE);
 
     setGameState({
       ...gameState,
       phase: "sampling",
       dots,
+      totalDots,
       samplesRemaining: SAMPLES_PER_ROUND,
       currentRoundData: {
         playerNumber: gameState.currentPlayer,
@@ -146,8 +154,9 @@ const Index = () => {
   };
 
   const handleNewGame = () => {
-    const dots = generateDotsWithVariableDensity(TOTAL_DOTS, BOARD_SIZE);
-    const actualDensity = calculateActualDensity(TOTAL_DOTS, BOARD_SIZE);
+    const totalDots = generateRandomDotCount();
+    const dots = generateDotsWithVariableDensity(totalDots, BOARD_SIZE);
+    const actualDensity = calculateActualDensity(totalDots, BOARD_SIZE);
     const standardDeviation = calculateStandardDeviation(dots, BOARD_SIZE);
 
     setGameState({
@@ -156,7 +165,7 @@ const Index = () => {
       phase: "sampling",
       dots,
       boardSize: BOARD_SIZE,
-      totalDots: TOTAL_DOTS,
+      totalDots,
       samplesRemaining: SAMPLES_PER_ROUND,
       rounds: [],
       currentRoundData: {
@@ -252,9 +261,10 @@ const Index = () => {
               />
             </Card>
 
-            {gameState.phase === "guessing" && (
-              <GuessInput onSubmit={handleGuess} />
-            )}
+            <GuessInput 
+              onSubmit={handleGuess} 
+              disabled={gameState.phase !== "guessing"}
+            />
 
             <Card className="p-4 bg-card border-primary">
               <RoundHistory rounds={gameState.rounds} />

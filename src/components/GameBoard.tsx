@@ -40,17 +40,17 @@ export const GameBoard = ({
         ctx.fill();
       });
     } else {
-      // Draw cover pattern
+      // Draw bright cover pattern
       const gradient = ctx.createLinearGradient(0, 0, boardSize, boardSize);
-      gradient.addColorStop(0, "hsl(220, 20%, 15%)");
-      gradient.addColorStop(0.5, "hsl(240, 25%, 18%)");
-      gradient.addColorStop(1, "hsl(220, 20%, 15%)");
+      gradient.addColorStop(0, "hsl(220, 40%, 35%)");
+      gradient.addColorStop(0.5, "hsl(240, 45%, 40%)");
+      gradient.addColorStop(1, "hsl(220, 40%, 35%)");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, boardSize, boardSize);
 
-      // Add noise pattern
+      // Add brighter noise pattern
       for (let i = 0; i < 1000; i++) {
-        ctx.fillStyle = `hsl(220, 15%, ${15 + Math.random() * 5}%)`;
+        ctx.fillStyle = `hsl(220, 30%, ${35 + Math.random() * 8}%)`;
         ctx.fillRect(
           Math.random() * boardSize,
           Math.random() * boardSize,
@@ -58,6 +58,11 @@ export const GameBoard = ({
           Math.random() * 3
         );
       }
+      
+      // Add subtle glow border
+      ctx.strokeStyle = "hsl(240, 50%, 50%)";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(2, 2, boardSize - 4, boardSize - 4);
     }
 
     // Draw sample circles

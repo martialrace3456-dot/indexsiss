@@ -176,7 +176,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-board p-4 relative">
       {gameState.phase === "handoff" && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-background/50 backdrop-blur-[1px] z-50 flex items-center justify-center p-4">
           <HandoffScreen
             nextPlayer={gameState.currentPlayer}
             onReady={handleHandoffReady}
@@ -245,24 +245,20 @@ const Index = () => {
 
           {/* Side Panel */}
           <div className="space-y-4">
-            {(gameState.phase === "sampling" || gameState.phase === "guessing" || gameState.phase === "reveal") && (
-              <Card className="p-4 bg-card border-primary">
-                <SampleInfo
-                  samples={gameState.currentRoundData.samples || []}
-                  samplesRemaining={gameState.samplesRemaining}
-                />
-              </Card>
-            )}
+            <Card className="p-4 bg-card border-primary">
+              <SampleInfo
+                samples={gameState.currentRoundData.samples || []}
+                samplesRemaining={gameState.samplesRemaining}
+              />
+            </Card>
 
             {gameState.phase === "guessing" && (
               <GuessInput onSubmit={handleGuess} />
             )}
 
-            {gameState.rounds.length > 0 && (
-              <Card className="p-4 bg-card border-primary">
-                <RoundHistory rounds={gameState.rounds} />
-              </Card>
-            )}
+            <Card className="p-4 bg-card border-primary">
+              <RoundHistory rounds={gameState.rounds} />
+            </Card>
           </div>
         </div>
       </div>

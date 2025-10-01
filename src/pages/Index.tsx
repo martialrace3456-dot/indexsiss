@@ -169,21 +169,20 @@ const Index = () => {
     });
   };
 
-  if (gameState.phase === "handoff") {
-    return (
-      <HandoffScreen
-        nextPlayer={gameState.currentPlayer}
-        onReady={handleHandoffReady}
-      />
-    );
-  }
-
   if (gameState.phase === "complete") {
     return <GameComplete rounds={gameState.rounds} onNewGame={handleNewGame} />;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-board p-4">
+    <div className="min-h-screen bg-gradient-board p-4 relative">
+      {gameState.phase === "handoff" && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <HandoffScreen
+            nextPlayer={gameState.currentPlayer}
+            onReady={handleHandoffReady}
+          />
+        </div>
+      )}
       <div className="max-w-7xl mx-auto space-y-4">
         {/* Header */}
         <Card className="p-4 bg-card border-2 border-primary shadow-lg shadow-primary/20">

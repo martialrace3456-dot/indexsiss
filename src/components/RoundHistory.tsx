@@ -52,7 +52,7 @@ export const RoundHistory = ({ rounds }: RoundHistoryProps) => {
                   P{round.playerNumber}
                 </div>
                 <span className="text-sm text-muted-foreground">
-                  Round {index + 1}
+                  Round {Math.floor(index / 2) + 1}
                 </span>
               </div>
               <div className="text-xl font-bold font-mono text-foreground">

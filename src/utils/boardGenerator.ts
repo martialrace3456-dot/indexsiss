@@ -5,7 +5,7 @@ export const generateDotsWithVariableDensity = (
   boardSize: number
 ): Dot[] => {
   const dots: Dot[] = [];
-  const minDistance = boardSize * 0.005; // Minimum distance between dots
+  const minDistance = boardSize * 0.002; // Reduced minimum distance to fit more dots
 
   // Create density clusters (3-5 clusters)
   const numClusters = 3 + Math.floor(Math.random() * 3);
@@ -18,7 +18,7 @@ export const generateDotsWithVariableDensity = (
 
   // Generate dots with cluster-based density
   let attempts = 0;
-  const maxAttempts = totalDots * 10;
+  const maxAttempts = totalDots * 50;
 
   while (dots.length < totalDots && attempts < maxAttempts) {
     attempts++;
@@ -27,7 +27,7 @@ export const generateDotsWithVariableDensity = (
     const x = Math.random() * boardSize;
     const y = Math.random() * boardSize;
 
-    let probability = 0.1; // Base probability for sparse areas
+    let probability = 0.2; // Base probability for sparse areas
     for (const cluster of clusters) {
       const distance = Math.sqrt(
         Math.pow(x - cluster.x, 2) + Math.pow(y - cluster.y, 2)
@@ -39,7 +39,7 @@ export const generateDotsWithVariableDensity = (
     }
 
     // Accept or reject based on probability
-    if (Math.random() < probability * 0.3) {
+    if (Math.random() < probability) {
       // Check minimum distance to existing dots
       const tooClose = dots.some(
         (dot) =>
@@ -53,6 +53,7 @@ export const generateDotsWithVariableDensity = (
     }
   }
 
+  console.log(`Generated ${dots.length} dots out of ${totalDots} requested`);
   return dots;
 };
 

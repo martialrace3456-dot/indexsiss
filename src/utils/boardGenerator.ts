@@ -62,14 +62,25 @@ export const calculateLocalDensity = (
   centerY: number,
   radius: number
 ): number => {
-  const dotsInCircle = dots.filter((dot) => {
-    const distance = Math.sqrt(
-      Math.pow(dot.x - centerX, 2) + Math.pow(dot.y - centerY, 2)
-    );
-    return distance <= radius;
-  }).length;
+  let dotsInCircle = 0;
+  
+  // Count dots within the circle boundary
+  for (const dot of dots) {
+    const dx = dot.x - centerX;
+    const dy = dot.y - centerY;
+    const distanceSquared = dx * dx + dy * dy;
+    const radiusSquared = radius * radius;
+    
+    // Use squared distances to avoid unnecessary sqrt calls
+    if (distanceSquared <= radiusSquared) {
+      dotsInCircle++;
+    }
+  }
 
+  // Circle area = π × r²
   const circleArea = Math.PI * radius * radius;
+  
+  // Density = dots / area (dots per square unit)
   return dotsInCircle / circleArea;
 };
 

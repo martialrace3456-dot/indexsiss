@@ -80,6 +80,15 @@ export const calculateLocalDensity = (
   // Circle area = π × r²
   const circleArea = Math.PI * radius * radius;
   
+  // Debug logging
+  console.log('Local Density Calculation:', {
+    dotsInCircle,
+    radius,
+    circleArea,
+    density: dotsInCircle / circleArea,
+    totalDotsChecked: dots.length
+  });
+  
   // Density = dots / area (dots per square unit)
   return dotsInCircle / circleArea;
 };

@@ -18,8 +18,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 const BOARD_SIZE = 1000;
-const MIN_DOTS = 200000;
-const MAX_DOTS = 400000;
+const MIN_DOTS = 50000;
+const MAX_DOTS = 100000;
 const SAMPLES_PER_ROUND = 5;
 const WINNING_SCORE = 50;
 const SAMPLE_RADIUS = BOARD_SIZE / (5 * Math.sqrt(Math.PI)); // 1/25th of board area

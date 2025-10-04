@@ -107,23 +107,18 @@ export const calculateStandardDeviation = (
 ): number => {
   const gridSize = 10;
   const cellSize = boardSize / gridSize;
-  const densities: number[] = [];
+  const cellCounts = new Array(gridSize * gridSize).fill(0) as number[];
 
-  for (let row = 0; row < gridSize; row++) {
-    for (let col = 0; col < gridSize; col++) {
-      const x1 = col * cellSize;
-      const y1 = row * cellSize;
-      const x2 = x1 + cellSize;
-      const y2 = y1 + cellSize;
-
-      const dotsInCell = dots.filter(
-        (dot) => dot.x >= x1 && dot.x < x2 && dot.y >= y1 && dot.y < y2
-      ).length;
-
-      const cellArea = cellSize * cellSize;
-      densities.push(dotsInCell / cellArea);
-    }
+  // Single pass: count dots per cell
+  for (const dot of dots) {
+    const col = Math.min(gridSize - 1, Math.max(0, Math.floor(dot.x / cellSize)));
+    const row = Math.min(gridSize - 1, Math.max(0, Math.floor(dot.y / cellSize)));
+    const idx = row * gridSize + col;
+    cellCounts[idx]++;
   }
+
+  const cellArea = cellSize * cellSize;
+  const densities: number[] = cellCounts.map((count) => count / cellArea);
 
   const mean = densities.reduce((sum, d) => sum + d, 0) / densities.length;
   const variance =

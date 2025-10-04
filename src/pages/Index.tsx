@@ -1,4 +1,4 @@
-import { useState, startTransition } from "react";
+import { useState } from "react";
 import { GameState, RoundData } from "@/types/game";
 import {
   generateDotsWithVariableDensity,
@@ -66,17 +66,6 @@ const Index = () => {
     standardDeviation: number;
   } | null>(null);
 
-  const startPreGenerateNextBoard = () => {
-    if (nextBoard !== null) return;
-    setTimeout(() => {
-      const totalDots = generateRandomDotCount();
-      const dots = generateDotsWithVariableDensity(totalDots, BOARD_SIZE);
-      const actualDensity = calculateActualDensity(totalDots, BOARD_SIZE);
-      const standardDeviation = calculateStandardDeviation(dots, BOARD_SIZE);
-      setNextBoard({ dots, totalDots, actualDensity, standardDeviation });
-    }, 0);
-  };
-
   const handleSample = (x: number, y: number) => {
     if (gameState.phase !== "sampling" || gameState.samplesRemaining <= 0)
       return;
@@ -102,10 +91,6 @@ const Index = () => {
       },
       phase: gameState.samplesRemaining === 1 ? "guessing" : "sampling",
     });
-
-    if (gameState.samplesRemaining === 1) {
-      startPreGenerateNextBoard();
-    }
   };
 
   const handleGuess = (guess: number) => {
@@ -130,10 +115,6 @@ const Index = () => {
       currentRoundData: completedRound,
       rounds: [...gameState.rounds, completedRound],
     });
-
-    if (!nextBoard) {
-      startPreGenerateNextBoard();
-    }
   };
 
   const handleContinue = () => {
@@ -154,8 +135,14 @@ const Index = () => {
     const nextPlayer = gameState.currentPlayer === 1 ? 2 : 1;
     const nextRound = nextPlayer === 1 ? gameState.currentRound + 1 : gameState.currentRound;
     
-    // Ensure next board is pre-generated in background
-    startPreGenerateNextBoard();
+    // Pre-generate next board in background
+    setTimeout(() => {
+      const totalDots = generateRandomDotCount();
+      const dots = generateDotsWithVariableDensity(totalDots, BOARD_SIZE);
+      const actualDensity = calculateActualDensity(totalDots, BOARD_SIZE);
+      const standardDeviation = calculateStandardDeviation(dots, BOARD_SIZE);
+      setNextBoard({ dots, totalDots, actualDensity, standardDeviation });
+    }, 0);
     
     setGameState({
       ...gameState,
@@ -179,21 +166,19 @@ const Index = () => {
       standardDeviation = calculateStandardDeviation(dots, BOARD_SIZE);
     }
 
-    startTransition(() => {
-      setGameState({
-        ...gameState,
-        phase: "sampling",
-        dots,
-        totalDots,
-        samplesRemaining: SAMPLES_PER_ROUND,
-        currentRoundData: {
-          playerNumber: gameState.currentPlayer,
-          samples: [],
-          actualDensity,
-          standardDeviation,
-          score: 0,
-        },
-      });
+    setGameState({
+      ...gameState,
+      phase: "sampling",
+      dots,
+      totalDots,
+      samplesRemaining: SAMPLES_PER_ROUND,
+      currentRoundData: {
+        playerNumber: gameState.currentPlayer,
+        samples: [],
+        actualDensity,
+        standardDeviation,
+        score: 0,
+      },
     });
   };
 

@@ -58,6 +58,14 @@ const Index = () => {
     };
   });
 
+  // Pre-generate next board for instant handoff
+  const [nextBoard, setNextBoard] = useState<{
+    dots: Array<{ x: number; y: number }>;
+    totalDots: number;
+    actualDensity: number;
+    standardDeviation: number;
+  } | null>(null);
+
   const handleSample = (x: number, y: number) => {
     if (gameState.phase !== "sampling" || gameState.samplesRemaining <= 0)
       return;
@@ -127,6 +135,15 @@ const Index = () => {
     const nextPlayer = gameState.currentPlayer === 1 ? 2 : 1;
     const nextRound = nextPlayer === 1 ? gameState.currentRound + 1 : gameState.currentRound;
     
+    // Pre-generate next board in background
+    setTimeout(() => {
+      const totalDots = generateRandomDotCount();
+      const dots = generateDotsWithVariableDensity(totalDots, BOARD_SIZE);
+      const actualDensity = calculateActualDensity(totalDots, BOARD_SIZE);
+      const standardDeviation = calculateStandardDeviation(dots, BOARD_SIZE);
+      setNextBoard({ dots, totalDots, actualDensity, standardDeviation });
+    }, 0);
+    
     setGameState({
       ...gameState,
       phase: "handoff",
@@ -136,10 +153,18 @@ const Index = () => {
   };
 
   const handleHandoffReady = () => {
-    const totalDots = generateRandomDotCount();
-    const dots = generateDotsWithVariableDensity(totalDots, BOARD_SIZE);
-    const actualDensity = calculateActualDensity(totalDots, BOARD_SIZE);
-    const standardDeviation = calculateStandardDeviation(dots, BOARD_SIZE);
+    // Use pre-generated board if available, otherwise generate new one
+    let dots, totalDots, actualDensity, standardDeviation;
+    
+    if (nextBoard) {
+      ({ dots, totalDots, actualDensity, standardDeviation } = nextBoard);
+      setNextBoard(null);
+    } else {
+      totalDots = generateRandomDotCount();
+      dots = generateDotsWithVariableDensity(totalDots, BOARD_SIZE);
+      actualDensity = calculateActualDensity(totalDots, BOARD_SIZE);
+      standardDeviation = calculateStandardDeviation(dots, BOARD_SIZE);
+    }
 
     setGameState({
       ...gameState,

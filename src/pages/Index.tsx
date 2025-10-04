@@ -16,6 +16,10 @@ import { HandoffScreen } from "@/components/HandoffScreen";
 import { GameComplete } from "@/components/GameComplete";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+} from "@/components/ui/dialog";
 
 const BOARD_SIZE = 1000;
 const MIN_DOTS = 50000;
@@ -243,17 +247,15 @@ const Index = () => {
               )}
             </Card>
 
-            {gameState.phase === "reveal" && (
-              <RoundResult
-                roundData={gameState.currentRoundData as RoundData}
-                onContinue={handleContinue}
-                showContinue={true}
-              />
-            )}
           </div>
 
           {/* Side Panel */}
           <div className="space-y-4">
+            <GuessInput 
+              onSubmit={handleGuess} 
+              disabled={gameState.phase !== "guessing"}
+            />
+
             <Card className="p-4 bg-card border-primary">
               <SampleInfo
                 samples={gameState.currentRoundData.samples || []}
@@ -261,17 +263,23 @@ const Index = () => {
               />
             </Card>
 
-            <GuessInput 
-              onSubmit={handleGuess} 
-              disabled={gameState.phase !== "guessing"}
-            />
-
             <Card className="p-4 bg-card border-primary">
               <RoundHistory rounds={gameState.rounds} />
             </Card>
           </div>
         </div>
       </div>
+
+      {/* Round Result Dialog */}
+      <Dialog open={gameState.phase === "reveal"}>
+        <DialogContent className="max-w-2xl">
+          <RoundResult
+            roundData={gameState.currentRoundData as RoundData}
+            onContinue={handleContinue}
+            showContinue={true}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

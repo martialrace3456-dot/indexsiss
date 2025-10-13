@@ -5,7 +5,50 @@ export const generateDotsWithVariableDensity = (
   boardSize: number
 ): Dot[] => {
   const dots: Dot[] = [];
-  const minDistance = boardSize * 0.002; // Reduced minimum distance to fit more dots
+  const minDistance = boardSize * 0.002;
+
+  // Spatial partitioning grid for fast collision detection
+  const gridCellSize = minDistance * 2; // Each cell is 2x minimum distance
+  const gridSize = Math.ceil(boardSize / gridCellSize);
+  const grid: Map<string, Dot[]> = new Map();
+
+  const getGridKey = (x: number, y: number): string => {
+    const col = Math.floor(x / gridCellSize);
+    const row = Math.floor(y / gridCellSize);
+    return `${col},${row}`;
+  };
+
+  const addToGrid = (dot: Dot) => {
+    const key = getGridKey(dot.x, dot.y);
+    if (!grid.has(key)) {
+      grid.set(key, []);
+    }
+    grid.get(key)!.push(dot);
+  };
+
+  const isValidPosition = (x: number, y: number): boolean => {
+    const col = Math.floor(x / gridCellSize);
+    const row = Math.floor(y / gridCellSize);
+    
+    // Only check neighboring cells (3x3 grid around the point)
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        const key = `${col + dx},${row + dy}`;
+        const cellDots = grid.get(key);
+        if (cellDots) {
+          for (const dot of cellDots) {
+            const dist = Math.sqrt(
+              Math.pow(dot.x - x, 2) + Math.pow(dot.y - y, 2)
+            );
+            if (dist < minDistance) {
+              return false;
+            }
+          }
+        }
+      }
+    }
+    return true;
+  };
 
   // Create density clusters (3-5 clusters)
   const numClusters = 3 + Math.floor(Math.random() * 3);
@@ -13,21 +56,20 @@ export const generateDotsWithVariableDensity = (
     x: Math.random() * boardSize,
     y: Math.random() * boardSize,
     radius: boardSize * (0.15 + Math.random() * 0.25),
-    density: 0.3 + Math.random() * 0.7, // 0.3 to 1.0
+    density: 0.3 + Math.random() * 0.7,
   }));
 
   // Generate dots with cluster-based density
   let attempts = 0;
-  const maxAttempts = totalDots * 50;
+  const maxAttempts = totalDots * 20; // Reduced from 50 since spatial partitioning is much faster
 
   while (dots.length < totalDots && attempts < maxAttempts) {
     attempts++;
 
-    // Calculate probability based on distance to clusters
     const x = Math.random() * boardSize;
     const y = Math.random() * boardSize;
 
-    let probability = 0.2; // Base probability for sparse areas
+    let probability = 0.2;
     for (const cluster of clusters) {
       const distance = Math.sqrt(
         Math.pow(x - cluster.x, 2) + Math.pow(y - cluster.y, 2)
@@ -38,17 +80,11 @@ export const generateDotsWithVariableDensity = (
       }
     }
 
-    // Accept or reject based on probability
     if (Math.random() < probability) {
-      // Check minimum distance to existing dots
-      const tooClose = dots.some(
-        (dot) =>
-          Math.sqrt(Math.pow(dot.x - x, 2) + Math.pow(dot.y - y, 2)) <
-          minDistance
-      );
-
-      if (!tooClose) {
-        dots.push({ x, y });
+      if (isValidPosition(x, y)) {
+        const dot = { x, y };
+        dots.push(dot);
+        addToGrid(dot);
       }
     }
   }

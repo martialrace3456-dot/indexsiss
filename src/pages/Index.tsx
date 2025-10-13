@@ -25,7 +25,7 @@ const BOARD_SIZE = 1000;
 const MIN_DOTS = 50000;
 const MAX_DOTS = 100000;
 const SAMPLES_PER_ROUND = 5;
-const WINNING_SCORE = 50;
+const TOTAL_ROUNDS = 7; // Each player plays 7 rounds (14 total)
 const SAMPLE_RADIUS = BOARD_SIZE / (5 * Math.sqrt(Math.PI)); // 1/25th of board area
 
 const generateRandomDotCount = () => {
@@ -118,22 +118,14 @@ const Index = () => {
   };
 
   const handleContinue = () => {
-    // Calculate cumulative scores
-    const player1Score = gameState.rounds
-      .filter(r => r.playerNumber === 1)
-      .reduce((sum, r) => sum + r.score, 0);
-    const player2Score = gameState.rounds
-      .filter(r => r.playerNumber === 2)
-      .reduce((sum, r) => sum + r.score, 0);
+    const nextPlayer = gameState.currentPlayer === 1 ? 2 : 1;
+    const nextRound = nextPlayer === 1 ? gameState.currentRound + 1 : gameState.currentRound;
 
-    // Check if either player has reached the winning score
-    if (player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE) {
+    // Check if both players have completed 7 rounds (14 total rounds)
+    if (gameState.rounds.length >= TOTAL_ROUNDS * 2) {
       setGameState({ ...gameState, phase: "complete" });
       return;
     }
-
-    const nextPlayer = gameState.currentPlayer === 1 ? 2 : 1;
-    const nextRound = nextPlayer === 1 ? gameState.currentRound + 1 : gameState.currentRound;
     
     // Pre-generate next board in background
     setTimeout(() => {

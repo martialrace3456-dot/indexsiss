@@ -14,7 +14,7 @@ import { RoundResult } from "@/components/RoundResult";
 import { RoundHistory } from "@/components/RoundHistory";
 import { HandoffScreen } from "@/components/HandoffScreen";
 import { GameComplete } from "@/components/GameComplete";
-import { Button } from "@/components/ui/button";
+import { WelcomeScreen } from "@/components/WelcomeScreen";
 import { Card } from "@/components/ui/card";
 import {
   Dialog,
@@ -34,27 +34,18 @@ const generateRandomDotCount = () => {
 
 const Index = () => {
   const [gameState, setGameState] = useState<GameState>(() => {
-    const totalDots = generateRandomDotCount();
-    const dots = generateDotsWithVariableDensity(totalDots, BOARD_SIZE);
-    const actualDensity = calculateActualDensity(totalDots, BOARD_SIZE);
-    const standardDeviation = calculateStandardDeviation(dots, BOARD_SIZE);
-
     return {
       currentPlayer: 1,
       currentRound: 1,
-      phase: "sampling",
-      dots,
+      phase: "setup",
+      dots: [],
       boardSize: BOARD_SIZE,
-      totalDots,
+      totalDots: 0,
       samplesRemaining: SAMPLES_PER_ROUND,
       rounds: [],
-      currentRoundData: {
-        playerNumber: 1,
-        samples: [],
-        actualDensity,
-        standardDeviation,
-        score: 0,
-      },
+      currentRoundData: {},
+      player1Name: undefined,
+      player2Name: undefined,
     };
   });
 
@@ -174,7 +165,7 @@ const Index = () => {
     });
   };
 
-  const handleNewGame = () => {
+  const handleStartGame = (player1Name: string, player2Name: string) => {
     const totalDots = generateRandomDotCount();
     const dots = generateDotsWithVariableDensity(totalDots, BOARD_SIZE);
     const actualDensity = calculateActualDensity(totalDots, BOARD_SIZE);
@@ -196,11 +187,40 @@ const Index = () => {
         standardDeviation,
         score: 0,
       },
+      player1Name,
+      player2Name,
     });
   };
 
+  const handleNewGame = () => {
+    setGameState({
+      currentPlayer: 1,
+      currentRound: 1,
+      phase: "setup",
+      dots: [],
+      boardSize: BOARD_SIZE,
+      totalDots: 0,
+      samplesRemaining: SAMPLES_PER_ROUND,
+      rounds: [],
+      currentRoundData: {},
+      player1Name: undefined,
+      player2Name: undefined,
+    });
+  };
+
+  if (gameState.phase === "setup") {
+    return <WelcomeScreen onStart={handleStartGame} />;
+  }
+
   if (gameState.phase === "complete") {
-    return <GameComplete rounds={gameState.rounds} onNewGame={handleNewGame} />;
+    return (
+      <GameComplete
+        rounds={gameState.rounds}
+        onNewGame={handleNewGame}
+        player1Name={gameState.player1Name}
+        player2Name={gameState.player2Name}
+      />
+    );
   }
 
   return (
@@ -209,6 +229,11 @@ const Index = () => {
         <div className="fixed inset-0 bg-background/50 backdrop-blur-[1px] z-50 flex items-center justify-center p-4">
           <HandoffScreen
             nextPlayer={gameState.currentPlayer}
+            nextPlayerName={
+              gameState.currentPlayer === 1
+                ? gameState.player1Name
+                : gameState.player2Name
+            }
             onReady={handleHandoffReady}
           />
         </div>
@@ -233,13 +258,15 @@ const Index = () => {
                 </div>
               </div>
               <div
-                className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold ${
+                className={`w-16 h-16 rounded-full flex items-center justify-center text-lg font-bold ${
                   gameState.currentPlayer === 1
                     ? "bg-primary text-primary-foreground"
                     : "bg-secondary text-secondary-foreground"
                 }`}
               >
-                P{gameState.currentPlayer}
+                {gameState.currentPlayer === 1
+                  ? gameState.player1Name?.substring(0, 2).toUpperCase() || "P1"
+                  : gameState.player2Name?.substring(0, 2).toUpperCase() || "P2"}
               </div>
             </div>
           </div>
@@ -281,7 +308,11 @@ const Index = () => {
             </Card>
 
             <Card className="p-4 bg-card border-primary">
-              <RoundHistory rounds={gameState.rounds} />
+              <RoundHistory
+                rounds={gameState.rounds}
+                player1Name={gameState.player1Name}
+                player2Name={gameState.player2Name}
+              />
             </Card>
           </div>
         </div>

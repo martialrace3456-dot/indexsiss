@@ -3,9 +3,11 @@ import { Card } from "@/components/ui/card";
 
 interface RoundHistoryProps {
   rounds: RoundData[];
+  player1Name?: string;
+  player2Name?: string;
 }
 
-export const RoundHistory = ({ rounds }: RoundHistoryProps) => {
+export const RoundHistory = ({ rounds, player1Name, player2Name }: RoundHistoryProps) => {
   if (rounds.length === 0) return null;
 
   const player1Rounds = rounds.filter((r) => r.playerNumber === 1);
@@ -14,19 +16,22 @@ export const RoundHistory = ({ rounds }: RoundHistoryProps) => {
   const player1Total = player1Rounds.reduce((sum, r) => sum + r.score, 0);
   const player2Total = player2Rounds.reduce((sum, r) => sum + r.score, 0);
 
+  const displayPlayer1 = player1Name || "Player 1";
+  const displayPlayer2 = player2Name || "Player 2";
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-bold text-foreground">Game History</h3>
         <div className="flex gap-4">
           <div className="text-center">
-            <div className="text-xs text-muted-foreground">Player 1</div>
+            <div className="text-xs text-muted-foreground">{displayPlayer1}</div>
             <div className="text-2xl font-bold font-mono text-primary">
               {player1Total.toFixed(2)}
             </div>
           </div>
           <div className="text-center">
-            <div className="text-xs text-muted-foreground">Player 2</div>
+            <div className="text-xs text-muted-foreground">{displayPlayer2}</div>
             <div className="text-2xl font-bold font-mono text-secondary">
               {player2Total.toFixed(2)}
             </div>

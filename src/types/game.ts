@@ -29,4 +29,6 @@ export interface GameState {
   samplesRemaining: number;
   rounds: RoundData[];
   currentRoundData: Partial<RoundData>;
+  player1Name?: string;
+  player2Name?: string;
 }

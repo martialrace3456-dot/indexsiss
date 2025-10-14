@@ -3,10 +3,12 @@ import { Card } from "@/components/ui/card";
 
 interface HandoffScreenProps {
   nextPlayer: 1 | 2;
+  nextPlayerName?: string;
   onReady: () => void;
 }
 
-export const HandoffScreen = ({ nextPlayer, onReady }: HandoffScreenProps) => {
+export const HandoffScreen = ({ nextPlayer, nextPlayerName, onReady }: HandoffScreenProps) => {
+  const displayName = nextPlayerName || `Player ${nextPlayer}`;
   return (
     <Card className="p-12 bg-card border-primary max-w-lg text-center space-y-6 shadow-2xl">
         <div className="space-y-2">
@@ -29,8 +31,8 @@ export const HandoffScreen = ({ nextPlayer, onReady }: HandoffScreenProps) => {
         </div>
 
         <div className="space-y-2">
-          <p className="text-lg font-semibold text-foreground">
-            Player {nextPlayer}'s Turn
+          <p className="text-2xl font-bold text-foreground">
+            {displayName}'s Turn
           </p>
           <p className="text-sm text-muted-foreground">
             Click ready when you're prepared to begin sampling

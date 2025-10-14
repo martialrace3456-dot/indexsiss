@@ -5,9 +5,13 @@ import { Button } from "@/components/ui/button";
 interface GameCompleteProps {
   rounds: RoundData[];
   onNewGame: () => void;
+  player1Name?: string;
+  player2Name?: string;
 }
 
-export const GameComplete = ({ rounds, onNewGame }: GameCompleteProps) => {
+export const GameComplete = ({ rounds, onNewGame, player1Name, player2Name }: GameCompleteProps) => {
+  const displayPlayer1 = player1Name || "Player 1";
+  const displayPlayer2 = player2Name || "Player 2";
   const player1Rounds = rounds.filter((r) => r.playerNumber === 1);
   const player2Rounds = rounds.filter((r) => r.playerNumber === 2);
 
@@ -21,7 +25,9 @@ export const GameComplete = ({ rounds, onNewGame }: GameCompleteProps) => {
       <Card className="p-8 bg-card border-primary max-w-2xl w-full space-y-6">
         <div className="text-center space-y-2">
           <h2 className="text-4xl font-bold text-foreground">
-            {winner ? `Player ${winner} Wins!` : "It's a Tie!"}
+            {winner
+              ? `${winner === 1 ? displayPlayer1 : displayPlayer2} Wins!`
+              : "It's a Tie!"}
           </h2>
           <p className="text-xl text-muted-foreground">
             Game complete after 7 rounds
@@ -29,37 +35,22 @@ export const GameComplete = ({ rounds, onNewGame }: GameCompleteProps) => {
         </div>
 
         <div className="grid grid-cols-2 gap-6">
-          <div className="p-6 bg-background rounded-lg border-2 border-primary">
-            <div className="text-center">
-              <div className="text-sm text-muted-foreground mb-2">Player 1</div>
-              <div className="text-5xl font-bold font-mono text-primary mb-4">
+          <Card className="p-6 bg-primary/10 border-primary">
+            <div className="text-center space-y-2">
+              <div className="text-sm text-muted-foreground">{displayPlayer1}</div>
+              <div className="text-5xl font-bold font-mono text-primary">
                 {player1Total.toFixed(2)}
               </div>
-              <div className="space-y-1">
-                {player1Rounds.map((round, index) => (
-                  <div key={index} className="text-sm text-muted-foreground">
-                    Round {rounds.indexOf(round) + 1}: {round.score.toFixed(2)}
-                  </div>
-                ))}
-              </div>
             </div>
-          </div>
-
-          <div className="p-6 bg-background rounded-lg border-2 border-secondary">
-            <div className="text-center">
-              <div className="text-sm text-muted-foreground mb-2">Player 2</div>
-              <div className="text-5xl font-bold font-mono text-secondary mb-4">
+          </Card>
+          <Card className="p-6 bg-secondary/10 border-secondary">
+            <div className="text-center space-y-2">
+              <div className="text-sm text-muted-foreground">{displayPlayer2}</div>
+              <div className="text-5xl font-bold font-mono text-secondary">
                 {player2Total.toFixed(2)}
               </div>
-              <div className="space-y-1">
-                {player2Rounds.map((round, index) => (
-                  <div key={index} className="text-sm text-muted-foreground">
-                    Round {rounds.indexOf(round) + 1}: {round.score.toFixed(2)}
-                  </div>
-                ))}
-              </div>
             </div>
-          </div>
+          </Card>
         </div>
 
         <div className="pt-4">

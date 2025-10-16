@@ -22,8 +22,8 @@ import {
 } from "@/components/ui/dialog";
 
 const BOARD_SIZE = 1000;
-const MIN_DOTS = 50000;
-const MAX_DOTS = 200000;
+const MIN_DOTS = 25000;
+const MAX_DOTS = 100000;
 const SAMPLES_PER_ROUND = 5;
 const TOTAL_ROUNDS = 7; // Each player plays 7 rounds (14 total)
 const SAMPLE_RADIUS = BOARD_SIZE / (5 * Math.sqrt(Math.PI)); // 1/25th of board area

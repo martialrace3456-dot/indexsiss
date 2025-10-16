@@ -226,7 +226,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-board p-4 relative">
       {gameState.phase === "handoff" && (
-        <div className="fixed inset-0 bg-background/50 backdrop-blur-[1px] z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+          <div className="pointer-events-auto">
           <HandoffScreen
             nextPlayer={gameState.currentPlayer}
             nextPlayerName={
@@ -236,6 +237,7 @@ const Index = () => {
             }
             onReady={handleHandoffReady}
           />
+          </div>
         </div>
       )}
       <div className="max-w-7xl mx-auto space-y-4">

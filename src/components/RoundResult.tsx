@@ -18,7 +18,7 @@ export const RoundResult = ({
     ((1 - difference / roundData.actualDensity) * 100).toFixed(2);
 
   return (
-    <Card className="p-6 bg-card border-primary space-y-6">
+    <Card className="p-6 bg-card/80 backdrop-blur-md border-primary space-y-6">
       <div className="text-center">
         <h3 className="text-2xl font-bold text-foreground mb-2">
           Round Complete!

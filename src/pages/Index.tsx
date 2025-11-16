@@ -327,6 +327,12 @@ const Index = () => {
             roundData={gameState.currentRoundData as RoundData}
             onContinue={handleContinue}
             showContinue={true}
+            isRoundComplete={gameState.currentPlayer === 2}
+            nextPlayerName={
+              gameState.currentPlayer === 1
+                ? gameState.player2Name || "Player 2"
+                : gameState.player1Name || "Player 1"
+            }
           />
         </DialogContent>
       </Dialog>

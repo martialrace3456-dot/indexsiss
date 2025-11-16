@@ -6,12 +6,16 @@ interface RoundResultProps {
   roundData: RoundData;
   onContinue: () => void;
   showContinue: boolean;
+  isRoundComplete: boolean;
+  nextPlayerName?: string;
 }
 
 export const RoundResult = ({
   roundData,
   onContinue,
   showContinue,
+  isRoundComplete,
+  nextPlayerName,
 }: RoundResultProps) => {
   const difference = Math.abs((roundData.guess || 0) - roundData.actualDensity);
   const accuracyPercentage =
@@ -20,9 +24,11 @@ export const RoundResult = ({
   return (
     <Card className="p-6 bg-card/75 border-primary space-y-6">
       <div className="text-center">
-        <h3 className="text-2xl font-bold text-foreground mb-2">
-          Round Complete!
-        </h3>
+        {isRoundComplete ? (
+          <h3 className="text-2xl font-bold text-foreground mb-2">
+            Round Complete!
+          </h3>
+        ) : null}
         <div className="inline-block px-6 py-3 bg-gradient-accent rounded-lg">
           <div className="text-sm text-primary-foreground">Score</div>
           <div className="text-4xl font-bold font-mono text-primary-foreground">
@@ -80,7 +86,7 @@ export const RoundResult = ({
           onClick={onContinue}
           className="w-full bg-primary hover:opacity-90 text-primary-foreground font-semibold text-lg py-6"
         >
-          Continue to Next Round
+          {isRoundComplete ? "Continue to Next Round" : `${nextPlayerName}'s Turn`}
         </Button>
       )}
     </Card>

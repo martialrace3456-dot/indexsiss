@@ -38,7 +38,7 @@ export const GameComplete = ({ rounds, onNewGame, player1Name, player2Name }: Ga
           <Card className="p-6 bg-primary/10 border-primary">
             <div className="text-center space-y-2">
               <div className="text-sm text-muted-foreground">{displayPlayer1}</div>
-              <div className="text-5xl font-bold font-mono text-primary">
+              <div className="text-4xl sm:text-5xl font-bold font-mono text-primary break-words">
                 {player1Total.toFixed(2)}
               </div>
             </div>
@@ -46,7 +46,7 @@ export const GameComplete = ({ rounds, onNewGame, player1Name, player2Name }: Ga
           <Card className="p-6 bg-secondary/10 border-secondary">
             <div className="text-center space-y-2">
               <div className="text-sm text-muted-foreground">{displayPlayer2}</div>
-              <div className="text-5xl font-bold font-mono text-secondary">
+              <div className="text-4xl sm:text-5xl font-bold font-mono text-secondary break-words">
                 {player2Total.toFixed(2)}
               </div>
             </div>

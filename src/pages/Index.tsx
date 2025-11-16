@@ -109,14 +109,18 @@ const Index = () => {
   };
 
   const handleContinue = () => {
-    const nextPlayer = gameState.currentPlayer === 1 ? 2 : 1;
-    const nextRound = nextPlayer === 1 ? gameState.currentRound + 1 : gameState.currentRound;
-
-    // Check if both players have completed 7 rounds (14 total rounds)
+    // Check if game is complete (both players completed all rounds)
     if (gameState.rounds.length >= TOTAL_ROUNDS * 2) {
       setGameState({ ...gameState, phase: "complete" });
       return;
     }
+    
+    // Determine next player and round
+    // After Player 1: Player 2 plays (same round)
+    // After Player 2: Player 1 plays (next round)
+    const isPlayer1Turn = gameState.currentPlayer === 1;
+    const nextPlayer = isPlayer1Turn ? 2 : 1;
+    const nextRound = isPlayer1Turn ? gameState.currentRound : gameState.currentRound + 1;
     
     // Pre-generate next board in background
     setTimeout(() => {

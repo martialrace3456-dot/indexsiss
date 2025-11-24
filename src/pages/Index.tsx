@@ -246,33 +246,49 @@ const Index = () => {
       )}
       <div className="max-w-7xl mx-auto space-y-4">
         {/* Header */}
-        <Card className="p-4 bg-card border-2 border-primary shadow-lg shadow-primary/20">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">
-                Sigma Guess
+        <Card className="p-0 bg-card border-2 border-primary shadow-lg shadow-primary/20 overflow-hidden">
+          <div className="grid grid-cols-3 gap-0">
+            {/* Player 1 Section */}
+            <div className={`p-4 transition-colors ${
+              gameState.currentPlayer === 1 
+                ? "bg-blue-500/20" 
+                : "bg-card"
+            }`}>
+              <div className="text-sm text-muted-foreground mb-1">
+                {gameState.player1Name || "Player 1"}
+              </div>
+              <div className="text-3xl font-bold font-mono text-foreground">
+                {gameState.rounds
+                  .filter(r => r.playerNumber === 1)
+                  .reduce((sum, r) => sum + r.score, 0)
+                  .toFixed(1)}
+              </div>
+            </div>
+
+            {/* Center Section - Game Name and Round */}
+            <div className="p-4 flex flex-col items-center justify-center text-center border-x border-border">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground leading-tight">
+                Indexsis
               </h1>
-              <p className="text-sm text-muted-foreground">
-                Statistical Estimation Game
+              <p className="text-sm text-muted-foreground mt-1">
+                Round {gameState.currentRound} of {TOTAL_ROUNDS}
               </p>
             </div>
-            <div className="flex gap-4">
-              <div className="text-center">
-                <div className="text-xs text-muted-foreground">Round</div>
-                <div className="text-2xl font-bold font-mono text-foreground">
-                  {gameState.currentRound}
-                </div>
+
+            {/* Player 2 Section */}
+            <div className={`p-4 transition-colors ${
+              gameState.currentPlayer === 2 
+                ? "bg-blue-500/20" 
+                : "bg-card"
+            }`}>
+              <div className="text-sm text-muted-foreground mb-1">
+                {gameState.player2Name || "Player 2"}
               </div>
-              <div
-                className={`w-16 h-16 rounded-full flex items-center justify-center text-lg font-bold ${
-                  gameState.currentPlayer === 1
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-secondary-foreground"
-                }`}
-              >
-                {gameState.currentPlayer === 1
-                  ? gameState.player1Name?.substring(0, 2).toUpperCase() || "P1"
-                  : gameState.player2Name?.substring(0, 2).toUpperCase() || "P2"}
+              <div className="text-3xl font-bold font-mono text-foreground">
+                {gameState.rounds
+                  .filter(r => r.playerNumber === 2)
+                  .reduce((sum, r) => sum + r.score, 0)
+                  .toFixed(1)}
               </div>
             </div>
           </div>

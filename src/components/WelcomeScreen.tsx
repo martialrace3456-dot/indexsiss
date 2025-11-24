@@ -34,7 +34,7 @@ export const WelcomeScreen = ({ onStart }: WelcomeScreenProps) => {
           </div>
           <div>
             <h1 className="text-5xl font-bold text-foreground mb-2">
-              Sigma Guess
+              Indexsis
             </h1>
             <p className="text-lg text-muted-foreground">
               Statistical Inference & Blind Sampling Game

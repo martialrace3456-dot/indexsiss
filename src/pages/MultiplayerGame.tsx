@@ -24,7 +24,7 @@ const TOTAL_ROUNDS = 7;
 const SAMPLES_PER_ROUND = 5;
 const SAMPLE_RADIUS = 50;
 
-const generateRandomDotCount = () => Math.floor(Math.random() * 401) + 100;
+const generateRandomDotCount = () => Math.floor(Math.random() * 75001) + 25000;
 
 interface NextBoardData {
   dots: any[];
@@ -214,18 +214,18 @@ export default function MultiplayerGame() {
 
   return (
     <div className="min-h-screen bg-background p-4">
-      {gameState.phase === "handoff" && (
-        <HandoffScreen
-          nextPlayer={gameState.currentPlayer}
-          nextPlayerName={
-            gameState.currentPlayer === 1
-              ? gameState.player1Name
-              : gameState.player2Name
-          }
-          onReady={handleHandoffReady}
-        />
-      )}
       <div className="max-w-7xl mx-auto space-y-4">
+        {gameState.phase === "handoff" && (
+          <HandoffScreen
+            nextPlayer={gameState.currentPlayer}
+            nextPlayerName={
+              gameState.currentPlayer === 1
+                ? gameState.player1Name
+                : gameState.player2Name
+            }
+            onReady={handleHandoffReady}
+          />
+        )}
         {/* Header */}
         <Card className="p-0 bg-card border-2 border-primary shadow-lg shadow-primary/20 overflow-hidden">
           <div className="grid grid-cols-3 gap-0">

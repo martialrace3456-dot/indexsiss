@@ -107,11 +107,6 @@ export const Leaderboard = ({ currentPlayerName }: LeaderboardProps) => {
                       {index + 1}.
                     </div>
                     <div className="col-span-7 text-foreground truncate">
-                      {isCurrentPlayer && (
-                        <span className="inline-block px-2 py-1 mr-2 text-xs bg-primary text-primary-foreground rounded">
-                          You
-                        </span>
-                      )}
                       {score.player_name}
                     </div>
                     <div className="col-span-3 text-right font-mono text-foreground">

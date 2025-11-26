@@ -44,7 +44,7 @@ export const MainMenu = () => {
             <div className="flex items-start gap-4 mb-4">
               <Trophy className="w-10 h-10 text-yellow-300" />
               <h2 className="text-2xl md:text-3xl font-bold text-yellow-300">
-                THE ESTIMATOR CHALLENGE
+                SINGLE PLAYER: THE ESTIMATOR CHALLENGE
               </h2>
             </div>
             <p className="text-white text-base md:text-lg">
@@ -60,7 +60,7 @@ export const MainMenu = () => {
             <div className="flex items-start gap-4 mb-4">
               <Swords className="w-10 h-10 text-slate-900" />
               <h2 className="text-2xl md:text-3xl font-bold text-slate-900">
-                LOCAL DUEL
+                DOUBLE PLAYER: LOCAL DUEL
               </h2>
             </div>
             <p className="text-slate-900 text-base md:text-lg">

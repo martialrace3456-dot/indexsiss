@@ -287,7 +287,10 @@ export default function MultiplayerGame() {
 
           {/* Right Sidebar */}
           <div className="space-y-4">
-            {gameState.phase === "guessing" && <GuessInput onSubmit={handleGuess} />}
+            <GuessInput 
+              onSubmit={handleGuess} 
+              disabled={gameState.phase !== "guessing"}
+            />
 
             <SampleInfo
               samplesRemaining={gameState.samplesRemaining}

@@ -38,6 +38,7 @@ export const SinglePlayerSetup = ({ onStart }: SinglePlayerSetupProps) => {
                 onChange={(e) => setPlayerName(e.target.value)}
                 placeholder="Your name"
                 className="bg-input border-border"
+                maxLength={20}
               />
             </div>
 

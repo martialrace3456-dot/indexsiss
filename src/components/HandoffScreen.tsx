@@ -10,7 +10,7 @@ interface HandoffScreenProps {
 export const HandoffScreen = ({ nextPlayer, nextPlayerName, onReady }: HandoffScreenProps) => {
   const displayName = nextPlayerName || `Player ${nextPlayer}`;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm" style={{ backgroundColor: 'rgba(0, 0, 0, 0.75)' }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: 'transparent' }}>
       <Card className="p-12 bg-transparent border-primary max-w-lg text-center space-y-6 shadow-2xl">
         <div className="space-y-2">
           <h2 className="text-3xl font-bold text-foreground">Pass Device</h2>

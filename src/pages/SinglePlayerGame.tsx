@@ -24,7 +24,7 @@ const TOTAL_ROUNDS = 7;
 const SAMPLES_PER_ROUND = 5;
 const SAMPLE_RADIUS = 50;
 
-const generateRandomDotCount = () => Math.floor(Math.random() * 401) + 100;
+const generateRandomDotCount = () => Math.floor(Math.random() * 75001) + 25000;
 
 export default function SinglePlayerGame() {
   const navigate = useNavigate();
@@ -210,13 +210,13 @@ export default function SinglePlayerGame() {
   const totalScore = gameState.rounds.reduce((sum, r) => sum + r.score, 0);
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-7xl mx-auto space-y-4">
-        {/* Header */}
-        <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-background p-2 sm:p-4">
+      <div className="max-w-7xl mx-auto space-y-2 sm:space-y-4">
+        {/* Header - Increased height with centered tabs */}
+        <div className="flex flex-col items-center justify-center py-4 sm:py-6 space-y-3 sm:space-y-4">
           <button
             onClick={() => navigate("/")}
-            className="text-3xl font-bold text-foreground hover:text-primary transition-colors"
+            className="text-2xl sm:text-3xl font-bold text-foreground hover:text-primary transition-colors"
           >
             Indexsis
           </button>
@@ -225,14 +225,14 @@ export default function SinglePlayerGame() {
             <Button
               variant={activeTab === "play" ? "default" : "outline"}
               onClick={() => setActiveTab("play")}
-              className="px-8"
+              className="px-6 sm:px-8 text-sm sm:text-base"
             >
               Play
             </Button>
             <Button
               variant={activeTab === "leaderboard" ? "default" : "outline"}
               onClick={() => setActiveTab("leaderboard")}
-              className="px-8"
+              className="px-6 sm:px-8 text-sm sm:text-base"
             >
               Leaderboard
             </Button>
@@ -240,9 +240,9 @@ export default function SinglePlayerGame() {
         </div>
 
         {activeTab === "play" ? (
-          <div className="grid lg:grid-cols-[1fr,400px] gap-4">
+          <div className="grid lg:grid-cols-[1fr,320px] xl:grid-cols-[1fr,400px] gap-2 sm:gap-4">
             {/* Game Board */}
-            <Card className="p-6 bg-card border-primary">
+            <Card className="p-3 sm:p-6 bg-card border-primary">
               <GameBoard
                 dots={gameState.dots}
                 boardSize={gameState.boardSize}
@@ -254,24 +254,25 @@ export default function SinglePlayerGame() {
             </Card>
 
             {/* Right Sidebar */}
-            <div className="space-y-4">
+            <div className="space-y-2 sm:space-y-4">
               {/* Player Info */}
-              <Card className="p-4 bg-card border-primary">
-                <div className="space-y-2">
-                  <div className="text-sm text-muted-foreground">{playerName}</div>
-                  <div className="text-3xl font-bold font-mono text-foreground">
+              <Card className="p-3 sm:p-4 bg-card border-primary">
+                <div className="space-y-1 sm:space-y-2">
+                  <div className="text-xs sm:text-sm text-muted-foreground">{playerName}</div>
+                  <div className="text-2xl sm:text-3xl font-bold font-mono text-foreground">
                     {totalScore.toFixed(1)}
                   </div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-xs sm:text-sm text-muted-foreground">
                     Round {gameState.currentRound} of {TOTAL_ROUNDS}
                   </div>
                 </div>
               </Card>
 
-              {/* Guess Input */}
-              {gameState.phase === "guessing" && (
-                <GuessInput onSubmit={handleGuess} />
-              )}
+              {/* Guess Input - Always visible */}
+              <GuessInput 
+                onSubmit={handleGuess}
+                disabled={gameState.phase !== "guessing"}
+              />
 
               {/* Sample Info */}
               <SampleInfo
@@ -280,13 +281,13 @@ export default function SinglePlayerGame() {
               />
 
               {/* Game History */}
-              <Card className="p-4 bg-card border-primary">
-                <h3 className="text-lg font-bold text-foreground mb-3">Game History</h3>
-                <div className="space-y-2 max-h-[300px] overflow-y-auto">
+              <Card className="p-3 sm:p-4 bg-card border-primary">
+                <h3 className="text-base sm:text-lg font-bold text-foreground mb-2 sm:mb-3">Game History</h3>
+                <div className="space-y-2 max-h-[200px] sm:max-h-[300px] overflow-y-auto">
                   {gameState.rounds.map((round, index) => (
                     <div
                       key={index}
-                      className="p-3 bg-muted/50 rounded-lg text-sm"
+                      className="p-2 sm:p-3 bg-muted/50 rounded-lg text-xs sm:text-sm"
                     >
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Round {index + 1}</span>

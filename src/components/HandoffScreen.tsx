@@ -10,7 +10,8 @@ interface HandoffScreenProps {
 export const HandoffScreen = ({ nextPlayer, nextPlayerName, onReady }: HandoffScreenProps) => {
   const displayName = nextPlayerName || `Player ${nextPlayer}`;
   return (
-    <Card className="p-12 bg-card/75 border-primary max-w-lg text-center space-y-6 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/75 backdrop-blur-sm">
+      <Card className="p-12 bg-card border-primary max-w-lg text-center space-y-6 shadow-2xl">
         <div className="space-y-2">
           <h2 className="text-3xl font-bold text-foreground">Pass Device</h2>
           <p className="text-muted-foreground">
@@ -46,5 +47,6 @@ export const HandoffScreen = ({ nextPlayer, nextPlayerName, onReady }: HandoffSc
           Ready to Play
         </Button>
       </Card>
+    </div>
   );
 };

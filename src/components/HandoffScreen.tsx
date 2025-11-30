@@ -5,9 +5,10 @@ interface HandoffScreenProps {
   nextPlayer: 1 | 2;
   nextPlayerName?: string;
   onReady: () => void;
+  disabled?: boolean;
 }
 
-export const HandoffScreen = ({ nextPlayer, nextPlayerName, onReady }: HandoffScreenProps) => {
+export const HandoffScreen = ({ nextPlayer, nextPlayerName, onReady, disabled = false }: HandoffScreenProps) => {
   const displayName = nextPlayerName || `Player ${nextPlayer}`;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: 'transparent' }}>
@@ -42,6 +43,7 @@ export const HandoffScreen = ({ nextPlayer, nextPlayerName, onReady }: HandoffSc
 
         <Button
           onClick={onReady}
+          disabled={disabled}
           className="w-full bg-gradient-accent hover:opacity-90 text-primary-foreground font-semibold text-xl py-8"
         >
           Ready to Play

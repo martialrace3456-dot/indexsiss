@@ -36,6 +36,7 @@ interface NextBoardData {
 export default function MultiplayerGame() {
   const navigate = useNavigate();
   const [nextBoard, setNextBoard] = useState<NextBoardData | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [gameState, setGameState] = useState<GameState>({
     currentPlayer: 1,
     currentRound: 1,
@@ -93,8 +94,12 @@ export default function MultiplayerGame() {
   };
 
   const handleContinue = () => {
+    if (isProcessing) return;
+    setIsProcessing(true);
+    
     if (gameState.rounds.length >= TOTAL_ROUNDS * 2) {
-      setGameState({ ...gameState, phase: "complete" });
+      setGameState(prev => ({ ...prev, phase: "complete" }));
+      setIsProcessing(false);
       return;
     }
 
@@ -110,15 +115,19 @@ export default function MultiplayerGame() {
       setNextBoard({ dots, totalDots, actualDensity, standardDeviation });
     }, 0);
 
-    setGameState({
-      ...gameState,
+    setGameState(prev => ({
+      ...prev,
       phase: "handoff",
       currentPlayer: nextPlayer,
       currentRound: nextRound,
-    });
+    }));
+    setIsProcessing(false);
   };
 
   const handleHandoffReady = () => {
+    if (isProcessing) return;
+    setIsProcessing(true);
+    
     const boardData = nextBoard || (() => {
       const totalDots = generateRandomDotCount();
       const dots = generateDotsWithVariableDensity(totalDots, BOARD_SIZE);
@@ -127,22 +136,23 @@ export default function MultiplayerGame() {
       return { dots, totalDots, actualDensity, standardDeviation };
     })();
 
-    setGameState({
-      ...gameState,
+    setGameState(prev => ({
+      ...prev,
       phase: "sampling",
       dots: boardData.dots,
       totalDots: boardData.totalDots,
       samplesRemaining: SAMPLES_PER_ROUND,
       currentRoundData: {
-        playerNumber: gameState.currentPlayer,
+        playerNumber: prev.currentPlayer,
         samples: [],
         guess: null,
         actualDensity: boardData.actualDensity,
         standardDeviation: boardData.standardDeviation,
         score: 0,
       },
-    });
+    }));
     setNextBoard(null);
+    setIsProcessing(false);
   };
 
   const handleStartGame = (player1Name: string, player2Name: string) => {
@@ -224,6 +234,7 @@ export default function MultiplayerGame() {
                 : gameState.player2Name
             }
             onReady={handleHandoffReady}
+            disabled={isProcessing}
           />
         )}
         {/* Header */}
@@ -318,6 +329,7 @@ export default function MultiplayerGame() {
                 ? gameState.player2Name || "Player 2"
                 : gameState.player1Name || "Player 1"
             }
+            disabled={isProcessing}
           />
         </DialogContent>
       </Dialog>

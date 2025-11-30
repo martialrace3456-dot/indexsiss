@@ -63,6 +63,7 @@ export default function SinglePlayerGame() {
   const [showResult, setShowResult] = useState(false);
   const [gameCompleteDialog, setGameCompleteDialog] = useState(false);
   const [isTopScore, setIsTopScore] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleSample = (x: number, y: number) => {
     if (gameState.phase !== "sampling" || gameState.samplesRemaining <= 0) return;
@@ -111,12 +112,15 @@ export default function SinglePlayerGame() {
   };
 
   const handleContinue = () => {
+    if (isProcessing) return;
+    setIsProcessing(true);
     setShowResult(false);
 
     if (gameState.currentRound >= TOTAL_ROUNDS) {
       // Game complete - save score
       const totalScore = gameState.rounds.reduce((sum, r) => sum + r.score, 0);
       saveScore(totalScore);
+      setIsProcessing(false);
       return;
     }
 
@@ -126,9 +130,9 @@ export default function SinglePlayerGame() {
     const actualDensity = calculateActualDensity(totalDots, BOARD_SIZE);
     const standardDeviation = calculateStandardDeviation(dots, BOARD_SIZE);
 
-    setGameState({
-      ...gameState,
-      currentRound: gameState.currentRound + 1,
+    setGameState(prev => ({
+      ...prev,
+      currentRound: prev.currentRound + 1,
       phase: "sampling",
       dots,
       totalDots,
@@ -141,7 +145,8 @@ export default function SinglePlayerGame() {
         standardDeviation,
         score: 0,
       },
-    });
+    }));
+    setIsProcessing(false);
   };
 
   const saveScore = async (totalScore: number) => {
@@ -315,6 +320,7 @@ export default function SinglePlayerGame() {
             showContinue={true}
             isRoundComplete={gameState.currentRound >= TOTAL_ROUNDS}
             nextPlayerName={playerName}
+            disabled={isProcessing}
           />
         </DialogContent>
       </Dialog>

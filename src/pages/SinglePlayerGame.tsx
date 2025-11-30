@@ -65,6 +65,13 @@ export default function SinglePlayerGame() {
   const [isTopScore, setIsTopScore] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Reset processing flag when phase transitions complete
+  useEffect(() => {
+    if (gameState.phase === "sampling" || gameState.phase === "complete") {
+      setIsProcessing(false);
+    }
+  }, [gameState.phase]);
+
   const handleSample = (x: number, y: number) => {
     if (gameState.phase !== "sampling" || gameState.samplesRemaining <= 0) return;
 
@@ -146,7 +153,6 @@ export default function SinglePlayerGame() {
         score: 0,
       },
     }));
-    setIsProcessing(false);
   };
 
   const saveScore = async (totalScore: number) => {

@@ -8,6 +8,7 @@ interface RoundResultProps {
   showContinue: boolean;
   isRoundComplete: boolean;
   nextPlayerName?: string;
+  disabled?: boolean;
 }
 
 export const RoundResult = ({
@@ -16,6 +17,7 @@ export const RoundResult = ({
   showContinue,
   isRoundComplete,
   nextPlayerName,
+  disabled = false,
 }: RoundResultProps) => {
   const difference = Math.abs((roundData.guess || 0) - roundData.actualDensity);
   const accuracyPercentage =
@@ -84,6 +86,7 @@ export const RoundResult = ({
       {showContinue && (
         <Button
           onClick={onContinue}
+          disabled={disabled}
           className="w-full bg-primary hover:opacity-90 text-primary-foreground font-semibold text-lg py-6"
         >
           {isRoundComplete ? "Continue to Next Round" : `${nextPlayerName}'s Turn`}

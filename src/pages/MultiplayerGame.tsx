@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { WelcomeScreen } from "@/components/WelcomeScreen";
 import { GameBoard } from "@/components/GameBoard";
@@ -37,6 +37,7 @@ export default function MultiplayerGame() {
   const navigate = useNavigate();
   const [nextBoard, setNextBoard] = useState<NextBoardData | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+
   const [gameState, setGameState] = useState<GameState>({
     currentPlayer: 1,
     currentRound: 1,
@@ -48,6 +49,13 @@ export default function MultiplayerGame() {
     rounds: [],
     currentRoundData: {},
   });
+
+  // Reset processing flag when phase transitions complete
+  useEffect(() => {
+    if (gameState.phase === "sampling" || gameState.phase === "complete") {
+      setIsProcessing(false);
+    }
+  }, [gameState.phase]);
 
   const handleSample = (x: number, y: number) => {
     if (gameState.phase !== "sampling" || gameState.samplesRemaining <= 0) return;
@@ -121,7 +129,6 @@ export default function MultiplayerGame() {
       currentPlayer: nextPlayer,
       currentRound: nextRound,
     }));
-    setIsProcessing(false);
   };
 
   const handleHandoffReady = () => {
@@ -152,7 +159,6 @@ export default function MultiplayerGame() {
       },
     }));
     setNextBoard(null);
-    setIsProcessing(false);
   };
 
   const handleStartGame = (player1Name: string, player2Name: string) => {

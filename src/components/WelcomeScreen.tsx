@@ -1,15 +1,17 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Users } from "lucide-react";
+import { Users, ArrowLeft } from "lucide-react";
 
 interface WelcomeScreenProps {
   onStart: (player1Name: string, player2Name: string) => void;
 }
 
 export const WelcomeScreen = ({ onStart }: WelcomeScreenProps) => {
+  const navigate = useNavigate();
   const [player1Name, setPlayer1Name] = useState("");
   const [player2Name, setPlayer2Name] = useState("");
 
@@ -23,7 +25,15 @@ export const WelcomeScreen = ({ onStart }: WelcomeScreenProps) => {
   const isValid = player1Name.trim().length > 0 && player2Name.trim().length > 0;
 
   return (
-    <div className="min-h-screen bg-gradient-board flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-board flex items-center justify-center p-4 relative">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => navigate("/")}
+        className="absolute top-4 left-4"
+      >
+        <ArrowLeft className="w-6 h-6" />
+      </Button>
       <Card className="max-w-2xl w-full p-8 bg-card border-2 border-primary shadow-lg shadow-primary/20 space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">

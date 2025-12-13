@@ -8,6 +8,7 @@ import { Leaderboard } from "@/components/Leaderboard";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 import { GameState } from "@/types/game";
 import {
   generateDotsWithVariableDensity,
@@ -221,7 +222,15 @@ export default function SinglePlayerGame() {
   const totalScore = gameState.rounds.reduce((sum, r) => sum + r.score, 0);
 
   return (
-    <div className="min-h-screen bg-background p-2 sm:p-4">
+    <div className="min-h-screen bg-background p-2 sm:p-4 relative">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => navigate("/single-player-setup")}
+        className="absolute top-4 left-4"
+      >
+        <ArrowLeft className="w-6 h-6" />
+      </Button>
       <div className="max-w-7xl mx-auto space-y-2 sm:space-y-4">
         {/* Header - Increased height with centered tabs */}
         <div className="flex flex-col items-center justify-center py-4 sm:py-6 space-y-3 sm:space-y-4">

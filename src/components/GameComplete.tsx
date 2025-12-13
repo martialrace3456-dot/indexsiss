@@ -1,6 +1,8 @@
+import { useNavigate } from "react-router-dom";
 import { RoundData } from "@/types/game";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 interface GameCompleteProps {
   rounds: RoundData[];
@@ -10,6 +12,7 @@ interface GameCompleteProps {
 }
 
 export const GameComplete = ({ rounds, onNewGame, player1Name, player2Name }: GameCompleteProps) => {
+  const navigate = useNavigate();
   const displayPlayer1 = player1Name || "Player 1";
   const displayPlayer2 = player2Name || "Player 2";
   const player1Rounds = rounds.filter((r) => r.playerNumber === 1);
@@ -21,7 +24,15 @@ export const GameComplete = ({ rounds, onNewGame, player1Name, player2Name }: Ga
   const winner = player1Total > player2Total ? 1 : player2Total > player1Total ? 2 : null;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-board p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-board p-4 relative">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => navigate("/")}
+        className="absolute top-4 left-4"
+      >
+        <ArrowLeft className="w-6 h-6" />
+      </Button>
       <Card className="p-8 bg-card border-primary max-w-2xl w-full space-y-6">
         <div className="text-center space-y-2">
           <h2 className="text-4xl font-bold text-foreground">

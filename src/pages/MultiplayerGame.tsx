@@ -10,6 +10,8 @@ import { GameComplete } from "@/components/GameComplete";
 import { HandoffScreen } from "@/components/HandoffScreen";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 import { GameState } from "@/types/game";
 import {
   generateDotsWithVariableDensity,
@@ -229,7 +231,15 @@ export default function MultiplayerGame() {
     .reduce((sum, r) => sum + r.score, 0);
 
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div className="min-h-screen bg-background p-4 relative">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => navigate("/")}
+        className="absolute top-4 left-4 z-10"
+      >
+        <ArrowLeft className="w-6 h-6" />
+      </Button>
       <div className="max-w-7xl mx-auto space-y-4">
         {gameState.phase === "handoff" && (
           <HandoffScreen

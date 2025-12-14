@@ -66,9 +66,12 @@ export default function SinglePlayerGame() {
   const [isTopScore, setIsTopScore] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Reset processing flag when phase transitions complete
+  // Reset processing flag and close dialog when phase transitions complete
   useEffect(() => {
-    if (gameState.phase === "sampling" || gameState.phase === "complete") {
+    if (gameState.phase === "sampling") {
+      setShowResult(false);
+      setIsProcessing(false);
+    } else if (gameState.phase === "complete") {
       setIsProcessing(false);
     }
   }, [gameState.phase]);
@@ -122,13 +125,13 @@ export default function SinglePlayerGame() {
   const handleContinue = () => {
     if (isProcessing) return;
     setIsProcessing(true);
-    setShowResult(false);
 
     if (gameState.currentRound >= TOTAL_ROUNDS) {
-      // Game complete - save score
+      // Game complete - save score and set phase
       const totalScore = gameState.rounds.reduce((sum, r) => sum + r.score, 0);
+      setGameState(prev => ({ ...prev, phase: "complete" }));
+      setShowResult(false);
       saveScore(totalScore);
-      setIsProcessing(false);
       return;
     }
 

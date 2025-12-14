@@ -54,7 +54,7 @@ export default function MultiplayerGame() {
 
   // Reset processing flag when phase transitions complete
   useEffect(() => {
-    if (gameState.phase === "sampling" || gameState.phase === "complete") {
+    if (gameState.phase === "sampling" || gameState.phase === "complete" || gameState.phase === "handoff") {
       setIsProcessing(false);
     }
   }, [gameState.phase]);
@@ -334,7 +334,11 @@ export default function MultiplayerGame() {
       </div>
 
       <Dialog open={gameState.phase === "reveal"} onOpenChange={() => {}}>
-        <DialogContent>
+        <DialogContent
+          hideCloseButton
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+        >
           <RoundResult
             roundData={gameState.currentRoundData as any}
             onContinue={handleContinue}

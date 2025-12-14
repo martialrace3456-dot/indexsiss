@@ -327,8 +327,12 @@ export default function SinglePlayerGame() {
       </div>
 
       {/* Round Result Dialog */}
-      <Dialog open={showResult} onOpenChange={setShowResult}>
-        <DialogContent>
+      <Dialog open={showResult} onOpenChange={() => {}}>
+        <DialogContent 
+          hideCloseButton
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+        >
           <RoundResult
             roundData={gameState.currentRoundData as any}
             onContinue={handleContinue}

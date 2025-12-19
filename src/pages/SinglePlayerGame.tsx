@@ -8,7 +8,7 @@ import { Leaderboard } from "@/components/Leaderboard";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, RotateCcw } from "lucide-react";
 import { GameState } from "@/types/game";
 import {
   generateDotsWithVariableDensity,
@@ -64,6 +64,7 @@ export default function SinglePlayerGame() {
   const [showResult, setShowResult] = useState(false);
   const [gameCompleteDialog, setGameCompleteDialog] = useState(false);
   const [isTopScore, setIsTopScore] = useState(false);
+  const [showRestartConfirm, setShowRestartConfirm] = useState(false);
   const isProcessingRef = useRef(false);
 
   // Reset processing flag and close dialog when phase transitions complete
@@ -322,6 +323,16 @@ export default function SinglePlayerGame() {
                   ))}
                 </div>
               </Card>
+
+              {/* Restart Match Button */}
+              <Button
+                variant="destructive"
+                onClick={() => setShowRestartConfirm(true)}
+                className="w-full"
+              >
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Restart Match
+              </Button>
             </div>
           </div>
         ) : (
@@ -383,6 +394,37 @@ export default function SinglePlayerGame() {
                 className="flex-1"
               >
                 View Leaderboard
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Restart Confirmation Dialog */}
+      <Dialog open={showRestartConfirm} onOpenChange={setShowRestartConfirm}>
+        <DialogContent>
+          <div className="space-y-4 text-center">
+            <h2 className="text-xl font-bold text-foreground">Restart Match?</h2>
+            <p className="text-muted-foreground">
+              This will reset your current game. Your score won't be saved.
+            </p>
+            <div className="flex gap-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowRestartConfirm(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  handleNewGame();
+                  setShowRestartConfirm(false);
+                }}
+                className="flex-1"
+              >
+                Restart
               </Button>
             </div>
           </div>

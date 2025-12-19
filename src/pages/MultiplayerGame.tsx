@@ -11,7 +11,7 @@ import { HandoffScreen } from "@/components/HandoffScreen";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, RotateCcw } from "lucide-react";
 import { GameState } from "@/types/game";
 import {
   generateDotsWithVariableDensity,
@@ -39,6 +39,7 @@ export default function MultiplayerGame() {
   const navigate = useNavigate();
   const [nextBoard, setNextBoard] = useState<NextBoardData | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showRestartConfirm, setShowRestartConfirm] = useState(false);
 
   const [gameState, setGameState] = useState<GameState>({
     currentPlayer: 1,
@@ -329,6 +330,16 @@ export default function MultiplayerGame() {
               player1Name={gameState.player1Name}
               player2Name={gameState.player2Name}
             />
+
+            {/* Restart Match Button */}
+            <Button
+              variant="destructive"
+              onClick={() => setShowRestartConfirm(true)}
+              className="w-full"
+            >
+              <RotateCcw className="w-4 h-4 mr-2" />
+              Restart Match
+            </Button>
           </div>
         </div>
       </div>
@@ -351,6 +362,37 @@ export default function MultiplayerGame() {
             }
             disabled={isProcessing}
           />
+        </DialogContent>
+      </Dialog>
+
+      {/* Restart Confirmation Dialog */}
+      <Dialog open={showRestartConfirm} onOpenChange={setShowRestartConfirm}>
+        <DialogContent>
+          <div className="space-y-4 text-center">
+            <h2 className="text-xl font-bold text-foreground">Restart Match?</h2>
+            <p className="text-muted-foreground">
+              This will reset the current game for both players.
+            </p>
+            <div className="flex gap-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowRestartConfirm(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  handleNewGame();
+                  setShowRestartConfirm(false);
+                }}
+                className="flex-1"
+              >
+                Restart
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

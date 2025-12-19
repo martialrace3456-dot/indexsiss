@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { GameBoard } from "@/components/GameBoard";
 import { GuessInput } from "@/components/GuessInput";
@@ -64,15 +64,15 @@ export default function SinglePlayerGame() {
   const [showResult, setShowResult] = useState(false);
   const [gameCompleteDialog, setGameCompleteDialog] = useState(false);
   const [isTopScore, setIsTopScore] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const isProcessingRef = useRef(false);
 
   // Reset processing flag and close dialog when phase transitions complete
   useEffect(() => {
     if (gameState.phase === "sampling") {
       setShowResult(false);
-      setIsProcessing(false);
+      isProcessingRef.current = false;
     } else if (gameState.phase === "complete") {
-      setIsProcessing(false);
+      isProcessingRef.current = false;
     }
   }, [gameState.phase]);
 
@@ -123,13 +123,13 @@ export default function SinglePlayerGame() {
   };
 
   const handleContinue = () => {
-    if (isProcessing) return;
-    setIsProcessing(true);
+    if (isProcessingRef.current) return;
+    isProcessingRef.current = true;
 
     if (gameState.currentRound >= TOTAL_ROUNDS) {
       // Game complete - save score and set phase
       const totalScore = gameState.rounds.reduce((sum, r) => sum + r.score, 0);
-      setGameState(prev => ({ ...prev, phase: "complete" }));
+      setGameState((prev) => ({ ...prev, phase: "complete" }));
       setShowResult(false);
       saveScore(totalScore);
       return;
@@ -141,7 +141,7 @@ export default function SinglePlayerGame() {
     const actualDensity = calculateActualDensity(totalDots, BOARD_SIZE);
     const standardDeviation = calculateStandardDeviation(dots, BOARD_SIZE);
 
-    setGameState(prev => ({
+    setGameState((prev) => ({
       ...prev,
       currentRound: prev.currentRound + 1,
       phase: "sampling",
@@ -342,7 +342,7 @@ export default function SinglePlayerGame() {
             showContinue={true}
             isRoundComplete={gameState.currentRound >= TOTAL_ROUNDS}
             nextPlayerName={playerName}
-            disabled={isProcessing}
+            disabled={gameState.phase !== "reveal"}
           />
         </DialogContent>
       </Dialog>

@@ -236,7 +236,20 @@ export default function MultiplayerGame() {
       <Button
         variant="ghost"
         size="icon"
-        onClick={() => navigate("/")}
+        onClick={() => {
+          // Reset to setup phase to show WelcomeScreen (player name entry)
+          setGameState(prev => ({
+            ...prev,
+            phase: "setup",
+            currentPlayer: 1,
+            currentRound: 1,
+            dots: [],
+            totalDots: 0,
+            samplesRemaining: SAMPLES_PER_ROUND,
+            rounds: [],
+            currentRoundData: {},
+          }));
+        }}
         className="absolute top-4 left-4 z-10"
       >
         <ArrowLeft className="w-6 h-6" />

@@ -44,7 +44,7 @@ export const MainMenu = () => {
             <div className="flex items-start gap-4 mb-4">
               <Trophy className="w-10 h-10 text-yellow-300" />
               <h2 className="text-2xl md:text-3xl font-bold text-yellow-300">
-                SINGLE PLAYER: THE ESTIMATOR CHALLENGE
+                THE GLOBAL ESTIMATOR CHALLENGE
               </h2>
             </div>
             <p className="text-white text-base md:text-lg">

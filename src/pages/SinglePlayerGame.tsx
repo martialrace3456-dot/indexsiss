@@ -65,6 +65,7 @@ export default function SinglePlayerGame() {
   const [gameCompleteDialog, setGameCompleteDialog] = useState(false);
   const [isTopScore, setIsTopScore] = useState(false);
   const [showRestartConfirm, setShowRestartConfirm] = useState(false);
+  const [showBackConfirm, setShowBackConfirm] = useState(false);
   const isProcessingRef = useRef(false);
 
   // Reset processing flag and close dialog when phase transitions complete
@@ -230,7 +231,7 @@ export default function SinglePlayerGame() {
       <Button
         variant="ghost"
         size="icon"
-        onClick={() => navigate("/single-player-setup")}
+        onClick={() => setShowBackConfirm(true)}
         className="absolute top-4 left-4"
       >
         <ArrowLeft className="w-6 h-6" />
@@ -425,6 +426,37 @@ export default function SinglePlayerGame() {
                 className="flex-1"
               >
                 Restart
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Back Confirmation Dialog */}
+      <Dialog open={showBackConfirm} onOpenChange={setShowBackConfirm}>
+        <DialogContent>
+          <div className="space-y-4 text-center">
+            <h2 className="text-xl font-bold text-foreground">Leave Game?</h2>
+            <p className="text-muted-foreground">
+              This will end the current game and take you back to player setup. Your progress won't be saved.
+            </p>
+            <div className="flex gap-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowBackConfirm(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  setShowBackConfirm(false);
+                  navigate("/single-player-setup");
+                }}
+                className="flex-1"
+              >
+                Leave Game
               </Button>
             </div>
           </div>

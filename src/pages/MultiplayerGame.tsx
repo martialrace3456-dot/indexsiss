@@ -40,6 +40,7 @@ export default function MultiplayerGame() {
   const [nextBoard, setNextBoard] = useState<NextBoardData | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showRestartConfirm, setShowRestartConfirm] = useState(false);
+  const [showBackConfirm, setShowBackConfirm] = useState(false);
 
   const [gameState, setGameState] = useState<GameState>({
     currentPlayer: 1,
@@ -236,20 +237,7 @@ export default function MultiplayerGame() {
       <Button
         variant="ghost"
         size="icon"
-        onClick={() => {
-          // Reset to setup phase to show WelcomeScreen (player name entry)
-          setGameState(prev => ({
-            ...prev,
-            phase: "setup",
-            currentPlayer: 1,
-            currentRound: 1,
-            dots: [],
-            totalDots: 0,
-            samplesRemaining: SAMPLES_PER_ROUND,
-            rounds: [],
-            currentRoundData: {},
-          }));
-        }}
+        onClick={() => setShowBackConfirm(true)}
         className="absolute top-4 left-4 z-10"
       >
         <ArrowLeft className="w-6 h-6" />
@@ -403,6 +391,47 @@ export default function MultiplayerGame() {
                 className="flex-1"
               >
                 Restart
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Back Confirmation Dialog */}
+      <Dialog open={showBackConfirm} onOpenChange={setShowBackConfirm}>
+        <DialogContent>
+          <div className="space-y-4 text-center">
+            <h2 className="text-xl font-bold text-foreground">Leave Game?</h2>
+            <p className="text-muted-foreground">
+              This will end the current game and take you back to player setup. Your progress won't be saved.
+            </p>
+            <div className="flex gap-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowBackConfirm(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  setGameState(prev => ({
+                    ...prev,
+                    phase: "setup",
+                    currentPlayer: 1,
+                    currentRound: 1,
+                    dots: [],
+                    totalDots: 0,
+                    samplesRemaining: SAMPLES_PER_ROUND,
+                    rounds: [],
+                    currentRoundData: {},
+                  }));
+                  setShowBackConfirm(false);
+                }}
+                className="flex-1"
+              >
+                Leave Game
               </Button>
             </div>
           </div>

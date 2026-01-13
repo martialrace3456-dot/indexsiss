@@ -14,6 +14,77 @@ export type Database = {
   }
   public: {
     Tables: {
+      contest_scores: {
+        Row: {
+          contest_id: string
+          created_at: string
+          game_date: string
+          id: string
+          player_name: string
+          total_score: number
+        }
+        Insert: {
+          contest_id: string
+          created_at?: string
+          game_date?: string
+          id?: string
+          player_name: string
+          total_score: number
+        }
+        Update: {
+          contest_id?: string
+          created_at?: string
+          game_date?: string
+          id?: string
+          player_name?: string
+          total_score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contest_scores_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "contests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contests: {
+        Row: {
+          created_at: string
+          duration_minutes: number
+          ends_at: string
+          id: string
+          name: string
+          participant_limit: number
+          passcode_hash: string
+          starts_at: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          duration_minutes: number
+          ends_at: string
+          id?: string
+          name: string
+          participant_limit?: number
+          passcode_hash: string
+          starts_at?: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          duration_minutes?: number
+          ends_at?: string
+          id?: string
+          name?: string
+          participant_limit?: number
+          passcode_hash?: string
+          starts_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
       scores: {
         Row: {
           created_at: string

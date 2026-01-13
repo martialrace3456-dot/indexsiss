@@ -32,6 +32,8 @@ export default function SinglePlayerGame() {
   const location = useLocation();
   const { toast } = useToast();
   const playerName = location.state?.playerName || "Player";
+  const contestId = location.state?.contestId || null;
+  const contestName = location.state?.contestName || "The Global Estimator Challenge";
 
   const [activeTab, setActiveTab] = useState<"play" | "leaderboard">("play");
   const [gameState, setGameState] = useState<GameState>(() => {
@@ -176,13 +178,26 @@ export default function SinglePlayerGame() {
 
       setIsTopScore(isTop3);
 
-      // Save the score
-      const { error } = await supabase.from("scores").insert({
+      // Save to global leaderboard
+      const { error: globalError } = await supabase.from("scores").insert({
         player_name: playerName,
         total_score: totalScore,
       });
 
-      if (error) throw error;
+      if (globalError) throw globalError;
+
+      // If in a contest, also save to contest leaderboard
+      if (contestId) {
+        const { error: contestError } = await supabase.from("contest_scores").insert({
+          contest_id: contestId,
+          player_name: playerName,
+          total_score: totalScore,
+        });
+
+        if (contestError) {
+          console.error("Error saving contest score:", contestError);
+        }
+      }
 
       setGameCompleteDialog(true);
     } catch (error) {
@@ -238,13 +253,17 @@ export default function SinglePlayerGame() {
       </Button>
       <div className="max-w-7xl mx-auto space-y-2 sm:space-y-4">
         {/* Header - Increased height with centered tabs */}
-        <div className="flex flex-col items-center justify-center py-4 sm:py-6 space-y-3 sm:space-y-4">
+        <div className="flex flex-col items-center justify-center py-4 sm:py-6 space-y-2 sm:space-y-3">
           <button
             onClick={() => navigate("/")}
             className="text-2xl sm:text-3xl font-bold text-foreground hover:text-primary transition-colors"
           >
             Indexsis
           </button>
+          
+          <p className="text-sm text-primary font-medium">
+            {contestName}
+          </p>
 
           <div className="flex gap-2">
             <Button

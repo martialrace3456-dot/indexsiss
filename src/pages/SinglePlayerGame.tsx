@@ -5,6 +5,8 @@ import { GuessInput } from "@/components/GuessInput";
 import { SampleInfo } from "@/components/SampleInfo";
 import { RoundResult } from "@/components/RoundResult";
 import { Leaderboard } from "@/components/Leaderboard";
+import { ContestLeaderboard } from "@/components/ContestLeaderboard";
+import { ContestWithParticipants } from "@/types/contest";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -355,6 +357,23 @@ export default function SinglePlayerGame() {
               </Button>
             </div>
           </div>
+        ) : contestId ? (
+          <ContestLeaderboard
+            contest={{
+              id: contestId,
+              name: contestName,
+              passcode_hash: '',
+              duration_minutes: 0,
+              participant_limit: 100,
+              starts_at: '',
+              ends_at: '',
+              status: 'active',
+              created_at: '',
+              participant_count: 0,
+            } as ContestWithParticipants}
+            currentPlayerName={playerName}
+            onBack={() => setActiveTab("play")}
+          />
         ) : (
           <Leaderboard currentPlayerName={playerName} />
         )}

@@ -106,7 +106,7 @@ export function ContestSelectionHub() {
           The Global Estimator Challenge
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 h-[600px]">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:h-[600px]">
           {/* Left Column - 40% */}
           <div className="md:col-span-2 flex flex-col gap-4">
             {/* Participant Area */}
@@ -212,7 +212,7 @@ export function ContestSelectionHub() {
           </div>
 
           {/* Right Column - 60% */}
-          <Card className="md:col-span-3 border-2 border-border flex flex-col overflow-hidden">
+          <Card className="md:col-span-3 border-2 border-border flex flex-col overflow-hidden max-h-[400px] md:max-h-none">
             <CardContent className="flex-1 flex flex-col gap-4 p-4 overflow-hidden">
               {/* Search */}
               <div className="relative">
@@ -226,7 +226,7 @@ export function ContestSelectionHub() {
               </div>
 
               {/* Currently Running */}
-              <div className="flex-1 min-h-0 flex flex-col">
+              <div className="min-h-[150px] md:flex-1 md:min-h-0 flex flex-col">
                 <h3 className="text-sm font-semibold text-muted-foreground mb-2">
                   Currently Running
                 </h3>
@@ -249,7 +249,7 @@ export function ContestSelectionHub() {
               </div>
 
               {/* Expired Contests */}
-              <div className="flex-1 min-h-0 flex flex-col">
+              <div className="min-h-[150px] md:flex-1 md:min-h-0 flex flex-col">
                 <h3 className="text-sm font-semibold text-muted-foreground mb-2">
                   Expired Contests
                 </h3>

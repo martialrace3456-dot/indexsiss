@@ -7,6 +7,7 @@ import { MainMenu } from "@/components/MainMenu";
 import SinglePlayerSetupPage from "./pages/SinglePlayerSetup";
 import SinglePlayerGame from "./pages/SinglePlayerGame";
 import MultiplayerGame from "./pages/MultiplayerGame";
+import AdminPanel from "./pages/AdminPanel";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/single-player-setup" element={<SinglePlayerSetupPage />} />
           <Route path="/single-player" element={<SinglePlayerGame />} />
           <Route path="/multiplayer" element={<MultiplayerGame />} />
+          <Route path="/admin-ctrl-9x7k2m" element={<AdminPanel />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

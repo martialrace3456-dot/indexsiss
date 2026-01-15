@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_settings: {
+        Row: {
+          id: string
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          id?: string
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          id?: string
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      announcements: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          message: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          message: string
+          type?: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          message?: string
+          type?: string
+        }
+        Relationships: []
+      }
       contest_scores: {
         Row: {
           contest_id: string
@@ -51,6 +99,8 @@ export type Database = {
       }
       contests: {
         Row: {
+          admin_notes: string | null
+          approval_status: Database["public"]["Enums"]["contest_approval_status"]
           created_at: string
           duration_minutes: number
           ends_at: string
@@ -62,6 +112,8 @@ export type Database = {
           status: string
         }
         Insert: {
+          admin_notes?: string | null
+          approval_status?: Database["public"]["Enums"]["contest_approval_status"]
           created_at?: string
           duration_minutes: number
           ends_at: string
@@ -73,6 +125,8 @@ export type Database = {
           status?: string
         }
         Update: {
+          admin_notes?: string | null
+          approval_status?: Database["public"]["Enums"]["contest_approval_status"]
           created_at?: string
           duration_minutes?: number
           ends_at?: string
@@ -82,6 +136,42 @@ export type Database = {
           passcode_hash?: string
           starts_at?: string
           status?: string
+        }
+        Relationships: []
+      }
+      overlay_content: {
+        Row: {
+          content_type: string
+          created_at: string
+          display_end: string | null
+          display_start: string | null
+          id: string
+          is_active: boolean
+          position: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          content_type?: string
+          created_at?: string
+          display_end?: string | null
+          display_start?: string | null
+          id?: string
+          is_active?: boolean
+          position?: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          content_type?: string
+          created_at?: string
+          display_end?: string | null
+          display_start?: string | null
+          id?: string
+          is_active?: boolean
+          position?: string
+          updated_at?: string
+          url?: string
         }
         Relationships: []
       }
@@ -117,7 +207,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      contest_approval_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -244,6 +334,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      contest_approval_status: ["pending", "approved", "rejected"],
+    },
   },
 } as const

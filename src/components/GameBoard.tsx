@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Dot, Sample } from "@/types/game";
+import { useOverlay } from "@/hooks/useOverlay";
 
 interface GameBoardProps {
   dots: Dot[];
@@ -18,6 +19,7 @@ export const GameBoard = ({
   onSample,
   canSample,
 }: GameBoardProps) => {
+  const { activeOverlay } = useOverlay("board-cover");
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -100,15 +102,37 @@ export const GameBoard = ({
   };
 
   return (
-    <canvas
-      ref={canvasRef}
-      width={boardSize}
-      height={boardSize}
-      onClick={handleClick}
-      className={`w-full h-full max-w-[600px] max-h-[600px] mx-auto rounded-lg shadow-lg ${
-        canSample ? "cursor-crosshair" : "cursor-default"
-      }`}
-      style={{ aspectRatio: "1 / 1" }}
-    />
+    <div className="relative w-full h-full max-w-[600px] max-h-[600px] mx-auto">
+      <canvas
+        ref={canvasRef}
+        width={boardSize}
+        height={boardSize}
+        onClick={handleClick}
+        className={`w-full h-full rounded-lg shadow-lg ${
+          canSample ? "cursor-crosshair" : "cursor-default"
+        }`}
+        style={{ aspectRatio: "1 / 1" }}
+      />
+      {activeOverlay && !showDots && (
+        <div className="absolute inset-0 pointer-events-none rounded-lg overflow-hidden">
+          {activeOverlay.content_type === "image" ? (
+            <img
+              src={activeOverlay.url}
+              alt="Overlay"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <video
+              src={activeOverlay.url}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-full object-cover"
+            />
+          )}
+        </div>
+      )}
+    </div>
   );
 };

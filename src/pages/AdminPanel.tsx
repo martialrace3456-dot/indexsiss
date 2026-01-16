@@ -5,6 +5,7 @@ import { ContestApproval } from "@/components/admin/ContestApproval";
 import { OverlayManager } from "@/components/admin/OverlayManager";
 import { AnnouncementManager } from "@/components/admin/AnnouncementManager";
 import { GameSettingsPanel } from "@/components/admin/GameSettingsPanel";
+import { DashboardPlaceholder } from "@/components/admin/DashboardPlaceholder";
 import { useContestApproval } from "@/hooks/useContestApproval";
 
 export default function AdminPanel() {
@@ -14,6 +15,8 @@ export default function AdminPanel() {
   const renderContent = () => {
     switch (activeSection) {
       case "dashboard":
+        return <DashboardPlaceholder />;
+      case "analytics":
         return <AnalyticsDashboard />;
       case "contests":
         return <ContestApproval />;
@@ -24,7 +27,7 @@ export default function AdminPanel() {
       case "settings":
         return <GameSettingsPanel />;
       default:
-        return <AnalyticsDashboard />;
+        return <DashboardPlaceholder />;
     }
   };
 

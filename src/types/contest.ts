@@ -1,6 +1,7 @@
 export interface Contest {
   id: string;
   name: string;
+  description?: string | null;
   passcode_hash: string;
   duration_minutes: number;
   participant_limit: number;

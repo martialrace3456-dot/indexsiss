@@ -23,12 +23,14 @@ export interface Announcement {
   type: 'info' | 'warning' | 'success' | 'error';
   is_active: boolean;
   expires_at: string | null;
+  targets: string[];
   created_at: string;
 }
 
 export interface ContestWithApproval {
   id: string;
   name: string;
+  description: string | null;
   passcode_hash: string;
   duration_minutes: number;
   participant_limit: number;
@@ -50,3 +52,18 @@ export interface GameAnalytics {
   averageScore: number;
   hourlyDistribution: { hour: number; count: number }[];
 }
+
+export type AnnouncementTarget = 
+  | 'all'
+  | 'main-menu'
+  | 'single-player-setup'
+  | 'single-player-game'
+  | 'multiplayer-game';
+
+export const ANNOUNCEMENT_TARGETS: { value: AnnouncementTarget; label: string }[] = [
+  { value: 'all', label: 'All Screens' },
+  { value: 'main-menu', label: 'Main Menu' },
+  { value: 'single-player-setup', label: 'Single Player Setup' },
+  { value: 'single-player-game', label: 'Single Player Game' },
+  { value: 'multiplayer-game', label: 'Multiplayer Game' },
+];

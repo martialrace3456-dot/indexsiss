@@ -2,7 +2,15 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Announcement } from "@/types/admin";
 
-export function useAnnouncements() {
+interface AnnouncementInsert {
+  message: string;
+  type: Announcement['type'];
+  is_active: boolean;
+  expires_at: string | null;
+  targets: string[];
+}
+
+export function useAnnouncements(targetScreen?: string) {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [activeAnnouncements, setActiveAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,20 +24,29 @@ export function useAnnouncements() {
 
       if (error) throw error;
 
-      const typedData = (data || []).map((item) => ({
+      const typedData: Announcement[] = (data || []).map((item) => ({
         ...item,
         type: item.type as Announcement['type'],
+        targets: (item as any).targets || ['all'],
       }));
 
       setAnnouncements(typedData);
 
       // Filter active announcements
       const now = new Date();
-      const active = typedData.filter((a) => {
+      let active = typedData.filter((a) => {
         if (!a.is_active) return false;
         if (a.expires_at && new Date(a.expires_at) < now) return false;
         return true;
       });
+
+      // If targetScreen is provided, filter by targets
+      if (targetScreen) {
+        active = active.filter((a) => {
+          const targets = a.targets || ['all'];
+          return targets.includes('all') || targets.includes(targetScreen);
+        });
+      }
 
       setActiveAnnouncements(active);
     } catch (error) {
@@ -37,9 +54,9 @@ export function useAnnouncements() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [targetScreen]);
 
-  const createAnnouncement = async (announcement: Omit<Announcement, 'id' | 'created_at'>) => {
+  const createAnnouncement = async (announcement: AnnouncementInsert) => {
     try {
       const { error } = await supabase.from('announcements').insert(announcement);
       if (error) throw error;

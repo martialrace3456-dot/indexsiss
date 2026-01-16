@@ -23,7 +23,7 @@ const App = () => (
           <Route path="/single-player-setup" element={<SinglePlayerSetupPage />} />
           <Route path="/single-player" element={<SinglePlayerGame />} />
           <Route path="/multiplayer" element={<MultiplayerGame />} />
-          <Route path="/admin-ctrl-9x7k2m" element={<AdminPanel />} />
+          <Route path="/indexsis-mngr-019910" element={<AdminPanel />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

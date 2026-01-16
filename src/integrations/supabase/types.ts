@@ -42,6 +42,7 @@ export type Database = {
           id: string
           is_active: boolean
           message: string
+          targets: string[] | null
           type: string
         }
         Insert: {
@@ -50,6 +51,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           message: string
+          targets?: string[] | null
           type?: string
         }
         Update: {
@@ -58,6 +60,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           message?: string
+          targets?: string[] | null
           type?: string
         }
         Relationships: []
@@ -102,6 +105,7 @@ export type Database = {
           admin_notes: string | null
           approval_status: Database["public"]["Enums"]["contest_approval_status"]
           created_at: string
+          description: string | null
           duration_minutes: number
           ends_at: string
           id: string
@@ -115,6 +119,7 @@ export type Database = {
           admin_notes?: string | null
           approval_status?: Database["public"]["Enums"]["contest_approval_status"]
           created_at?: string
+          description?: string | null
           duration_minutes: number
           ends_at: string
           id?: string
@@ -128,6 +133,7 @@ export type Database = {
           admin_notes?: string | null
           approval_status?: Database["public"]["Enums"]["contest_approval_status"]
           created_at?: string
+          description?: string | null
           duration_minutes?: number
           ends_at?: string
           id?: string

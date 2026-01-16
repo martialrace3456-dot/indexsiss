@@ -43,6 +43,10 @@ export function useAdminSettings() {
               const num = parseInt(val, 10);
               (settingsMap as any)[key] = isNaN(num) ? val : num;
             }
+          } else if (typeof val === 'boolean') {
+            (settingsMap as any)[key] = val;
+          } else if (typeof val === 'number') {
+            (settingsMap as any)[key] = val;
           } else {
             (settingsMap as any)[key] = val;
           }
@@ -59,10 +63,13 @@ export function useAdminSettings() {
 
   const updateSetting = async (key: keyof SettingsMap, value: boolean | number | string) => {
     try {
+      // Use upsert to handle both insert and update cases
       const { error } = await supabase
         .from('admin_settings')
-        .update({ value: JSON.stringify(value), updated_at: new Date().toISOString() })
-        .eq('key', key);
+        .upsert(
+          { key, value: value, updated_at: new Date().toISOString() },
+          { onConflict: 'key' }
+        );
 
       if (error) throw error;
 

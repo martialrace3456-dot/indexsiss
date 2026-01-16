@@ -9,6 +9,7 @@ import { ContestList } from "@/components/ContestList";
 import { CreateContestModal } from "@/components/CreateContestModal";
 import { ManageContestModal } from "@/components/ManageContestModal";
 import { ContestLeaderboard } from "@/components/ContestLeaderboard";
+import { AnnouncementOverlay } from "@/components/AnnouncementOverlay";
 import { ContestWithParticipants } from "@/types/contest";
 import { toast } from "sonner";
 
@@ -79,6 +80,7 @@ export function ContestSelectionHub() {
   if (showLeaderboard && selectedContest) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <AnnouncementOverlay targetScreen="single-player-setup" />
         <div className="w-full max-w-2xl h-[600px]">
           <ContestLeaderboard
             contest={selectedContest}
@@ -92,6 +94,8 @@ export function ContestSelectionHub() {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 relative">
+      <AnnouncementOverlay targetScreen="single-player-setup" />
+      
       <Button
         variant="ghost"
         size="icon"

@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +20,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { hashPasscode } from "@/utils/hashPasscode";
 import { toast } from "sonner";
+import { useAdminSettings } from "@/hooks/useAdminSettings";
 
 interface CreateContestModalProps {
   open: boolean;
@@ -42,7 +44,9 @@ export function CreateContestModal({
   onOpenChange,
   onContestCreated,
 }: CreateContestModalProps) {
+  const { settings } = useAdminSettings();
   const [contestName, setContestName] = useState("");
+  const [description, setDescription] = useState("");
   const [duration, setDuration] = useState("60");
   const [participantLimit, setParticipantLimit] = useState("100");
   const [passcode, setPasscode] = useState("");
@@ -68,22 +72,33 @@ export function CreateContestModal({
       const durationMinutes = parseInt(duration);
       const endsAt = new Date(Date.now() + durationMinutes * 60 * 1000).toISOString();
 
+      // Determine approval status based on admin settings
+      const approvalStatus = settings.require_contest_approval ? 'pending' : 'approved';
+
       const { error } = await supabase.from('contests').insert({
         name: contestName.trim(),
+        description: description.trim() || null,
         passcode_hash: hashedPasscode,
         duration_minutes: durationMinutes,
         participant_limit: parseInt(participantLimit),
         ends_at: endsAt,
+        approval_status: approvalStatus,
       });
 
       if (error) throw error;
 
-      toast.success("Contest created successfully!");
+      if (approvalStatus === 'pending') {
+        toast.success("Contest submitted for approval. It will appear once approved.");
+      } else {
+        toast.success("Contest created successfully!");
+      }
+      
       onContestCreated();
       onOpenChange(false);
       
       // Reset form
       setContestName("");
+      setDescription("");
       setDuration("60");
       setParticipantLimit("100");
       setPasscode("");
@@ -106,6 +121,11 @@ export function CreateContestModal({
           <DialogTitle className="text-foreground">Launch a Contest</DialogTitle>
           <DialogDescription>
             Create a private contest with its own leaderboard. Scores will also count toward global rankings.
+            {settings.require_contest_approval && (
+              <span className="block mt-1 text-amber-500">
+                Note: Contests require admin approval before going live.
+              </span>
+            )}
           </DialogDescription>
         </DialogHeader>
         
@@ -119,6 +139,19 @@ export function CreateContestModal({
               placeholder="My Awesome Contest"
               maxLength={50}
               className="bg-input border-border"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">Description (Optional)</Label>
+            <Textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Describe your contest..."
+              maxLength={500}
+              rows={3}
+              className="bg-input border-border resize-none"
             />
           </div>
 

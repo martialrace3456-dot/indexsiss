@@ -17,10 +17,11 @@ export function useContests() {
         .eq('status', 'active')
         .lt('ends_at', new Date().toISOString());
 
-      // Fetch all contests
+      // Fetch all contests that are approved (only approved contests visible to players)
       const { data: contests, error } = await supabase
         .from('contests')
         .select('*')
+        .eq('approval_status', 'approved')
         .order('ends_at', { ascending: true });
 
       if (error) throw error;

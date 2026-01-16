@@ -1,11 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { Trophy, Swords } from "lucide-react";
+import { AnnouncementOverlay } from "@/components/AnnouncementOverlay";
 
 export const MainMenu = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Announcement Overlay */}
+      <AnnouncementOverlay targetScreen="main-menu" />
+      
       {/* Animated dot background */}
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(100)].map((_, i) => (

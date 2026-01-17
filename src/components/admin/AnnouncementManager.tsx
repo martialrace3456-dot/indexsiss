@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -24,7 +24,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useAnnouncements } from "@/hooks/useAnnouncements";
-import { Announcement } from "@/types/admin";
+import { Announcement, ANNOUNCEMENT_TARGETS, AnnouncementTarget } from "@/types/admin";
 import { Plus, Trash2, Info, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -47,6 +47,7 @@ export function AnnouncementManager() {
     type: "info" as Announcement['type'],
     is_active: true,
     expires_at: "",
+    targets: ['all'] as string[],
   });
 
   const handleCreate = async () => {
@@ -55,15 +56,21 @@ export function AnnouncementManager() {
       return;
     }
 
+    if (newAnnouncement.targets.length === 0) {
+      toast.error("Please select at least one target screen");
+      return;
+    }
+
     const success = await createAnnouncement({
       ...newAnnouncement,
       expires_at: newAnnouncement.expires_at || null,
+      targets: newAnnouncement.targets,
     });
 
     if (success) {
       toast.success("Announcement created");
       setShowAddDialog(false);
-      setNewAnnouncement({ message: "", type: "info", is_active: true, expires_at: "" });
+      setNewAnnouncement({ message: "", type: "info", is_active: true, expires_at: "", targets: ['all'] });
     } else {
       toast.error("Failed to create announcement");
     }
@@ -90,6 +97,43 @@ export function AnnouncementManager() {
   const isExpired = (expiresAt: string | null) => {
     if (!expiresAt) return false;
     return new Date(expiresAt) < new Date();
+  };
+
+  const handleTargetToggle = (target: AnnouncementTarget) => {
+    setNewAnnouncement((prev) => {
+      const currentTargets = prev.targets;
+      
+      // If selecting 'all', clear other selections
+      if (target === 'all') {
+        return { ...prev, targets: ['all'] };
+      }
+      
+      // If selecting a specific target, remove 'all' if present
+      let newTargets = currentTargets.filter(t => t !== 'all');
+      
+      if (newTargets.includes(target)) {
+        newTargets = newTargets.filter(t => t !== target);
+      } else {
+        newTargets.push(target);
+      }
+      
+      // If no targets selected, default to 'all'
+      if (newTargets.length === 0) {
+        newTargets = ['all'];
+      }
+      
+      return { ...prev, targets: newTargets };
+    });
+  };
+
+  const getTargetLabels = (targets: string[]) => {
+    if (!targets || targets.length === 0 || targets.includes('all')) {
+      return 'All Screens';
+    }
+    return targets.map(t => {
+      const found = ANNOUNCEMENT_TARGETS.find(at => at.value === t);
+      return found?.label || t;
+    }).join(', ');
   };
 
   if (loading) {
@@ -131,26 +175,30 @@ export function AnnouncementManager() {
                 }`}
               >
                 <CardContent className="p-4">
-                  <div className="flex items-start gap-4">
-                    <div className={`p-2 rounded-lg ${typeConfig.bg}`}>
-                      <TypeIcon className={`h-5 w-5 ${typeConfig.color}`} />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Badge variant="outline" className={`${typeConfig.bg} ${typeConfig.color}`}>
-                          {announcement.type}
-                        </Badge>
-                        {announcement.is_active && !expired && (
-                          <Badge className="bg-primary/20 text-primary">Active</Badge>
-                        )}
-                        {expired && <Badge variant="secondary">Expired</Badge>}
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-3 flex-1">
+                      <div className={`p-2 rounded-lg ${typeConfig.bg}`}>
+                        <TypeIcon className={`h-5 w-5 ${typeConfig.color}`} />
                       </div>
-                      <p className="text-foreground">{announcement.message}</p>
-                      <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                        <span>Created: {format(new Date(announcement.created_at), 'MMM d, yyyy h:mm a')}</span>
-                        {announcement.expires_at && (
-                          <span>Expires: {format(new Date(announcement.expires_at), 'MMM d, yyyy h:mm a')}</span>
-                        )}
+                      <div className="flex-1">
+                        <p className="font-medium">{announcement.message}</p>
+                        <div className="flex flex-wrap items-center gap-2 mt-2">
+                          <Badge variant="outline" className="capitalize">
+                            {announcement.type}
+                          </Badge>
+                          <Badge variant={announcement.is_active && !expired ? "default" : "secondary"}>
+                            {expired ? "Expired" : announcement.is_active ? "Active" : "Inactive"}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">
+                            Targets: {getTargetLabels(announcement.targets)}
+                          </span>
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Created: {format(new Date(announcement.created_at), "MMM d, yyyy HH:mm")}
+                          {announcement.expires_at && (
+                            <> · Expires: {format(new Date(announcement.expires_at), "MMM d, yyyy HH:mm")}</>
+                          )}
+                        </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -159,13 +207,14 @@ export function AnnouncementManager() {
                         onCheckedChange={() =>
                           handleToggleActive(announcement.id, announcement.is_active)
                         }
+                        disabled={expired}
                       />
                       <Button
-                        variant="destructive"
+                        variant="ghost"
                         size="icon"
                         onClick={() => setDeletingId(announcement.id)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </div>
                   </div>
@@ -178,33 +227,31 @@ export function AnnouncementManager() {
 
       {/* Add Announcement Dialog */}
       <AlertDialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-        <AlertDialogContent className="max-w-lg">
+        <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle>New Announcement</AlertDialogTitle>
             <AlertDialogDescription>
-              Create a new announcement to broadcast to all active players.
+              Create an announcement to display to players on selected screens.
             </AlertDialogDescription>
           </AlertDialogHeader>
-
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Message</Label>
               <Textarea
-                placeholder="Enter your announcement message..."
                 value={newAnnouncement.message}
                 onChange={(e) =>
-                  setNewAnnouncement((prev) => ({ ...prev, message: e.target.value }))
+                  setNewAnnouncement({ ...newAnnouncement, message: e.target.value })
                 }
+                placeholder="Enter your announcement message..."
                 rows={3}
               />
             </div>
-
             <div className="space-y-2">
               <Label>Type</Label>
               <Select
                 value={newAnnouncement.type}
-                onValueChange={(v) =>
-                  setNewAnnouncement((prev) => ({ ...prev, type: v as Announcement['type'] }))
+                onValueChange={(value: Announcement['type']) =>
+                  setNewAnnouncement({ ...newAnnouncement, type: value })
                 }
               >
                 <SelectTrigger>
@@ -218,52 +265,67 @@ export function AnnouncementManager() {
                 </SelectContent>
               </Select>
             </div>
-
+            <div className="space-y-2">
+              <Label>Target Screens</Label>
+              <div className="space-y-2 border rounded-md p-3">
+                {ANNOUNCEMENT_TARGETS.map((target) => (
+                  <div key={target.value} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`target-${target.value}`}
+                      checked={newAnnouncement.targets.includes(target.value)}
+                      onCheckedChange={() => handleTargetToggle(target.value)}
+                    />
+                    <label
+                      htmlFor={`target-${target.value}`}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                    >
+                      {target.label}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
             <div className="space-y-2">
               <Label>Expires At (optional)</Label>
-              <Input
+              <input
                 type="datetime-local"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
                 value={newAnnouncement.expires_at}
                 onChange={(e) =>
-                  setNewAnnouncement((prev) => ({ ...prev, expires_at: e.target.value }))
+                  setNewAnnouncement({ ...newAnnouncement, expires_at: e.target.value })
                 }
               />
             </div>
-
-            <div className="flex items-center gap-2">
+            <div className="flex items-center space-x-2">
               <Switch
-                id="new-active-announcement"
+                id="active"
                 checked={newAnnouncement.is_active}
                 onCheckedChange={(checked) =>
-                  setNewAnnouncement((prev) => ({ ...prev, is_active: checked }))
+                  setNewAnnouncement({ ...newAnnouncement, is_active: checked })
                 }
               />
-              <Label htmlFor="new-active-announcement">Activate immediately</Label>
+              <Label htmlFor="active">Active immediately</Label>
             </div>
           </div>
-
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleCreate}>Create Announcement</AlertDialogAction>
+            <AlertDialogAction onClick={handleCreate}>Create</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Delete Dialog */}
+      {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!deletingId} onOpenChange={() => setDeletingId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Announcement</AlertDialogTitle>
+            <AlertDialogTitle>Delete Announcement?</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this announcement? This action cannot be undone.
+              This action cannot be undone. The announcement will be permanently removed.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-destructive text-destructive-foreground"
-            >
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

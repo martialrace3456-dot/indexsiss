@@ -8,6 +8,7 @@ export interface Contest {
   starts_at: string;
   ends_at: string;
   status: 'active' | 'expired';
+  approval_status?: 'pending' | 'approved' | 'rejected';
   created_at: string;
 }
 

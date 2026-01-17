@@ -15,7 +15,7 @@ import { toast } from "sonner";
 
 export function ContestSelectionHub() {
   const navigate = useNavigate();
-  const { activeContests, expiredContests, loading, refetch } = useContests();
+  const { activeContests, pendingContests, expiredContests, loading, refetch } = useContests();
   
   const [playerName, setPlayerName] = useState("");
   const [selectedContest, setSelectedContest] = useState<ContestWithParticipants | null>(null);
@@ -26,10 +26,16 @@ export function ContestSelectionHub() {
 
   const isGlobalSelected = selectedContest === null;
   const isExpiredContest = selectedContest?.status === 'expired';
+  const isPendingContest = pendingContests.some(c => c.id === selectedContest?.id);
 
   const handleStart = () => {
     if (!playerName.trim()) {
       toast.error("Please enter your name");
+      return;
+    }
+
+    if (isPendingContest) {
+      toast.error("This contest is awaiting approval and cannot be joined yet");
       return;
     }
 
@@ -53,6 +59,10 @@ export function ContestSelectionHub() {
   };
 
   const filteredActiveContests = activeContests.filter(c =>
+    c.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredPendingContests = pendingContests.filter(c =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -143,10 +153,10 @@ export function ContestSelectionHub() {
 
                 <Button
                   onClick={handleStart}
-                  disabled={!playerName.trim() || isExpiredContest}
+                  disabled={!playerName.trim() || isExpiredContest || isPendingContest}
                   className="w-full bg-gradient-accent hover:opacity-90 text-primary-foreground font-semibold py-6"
                 >
-                  {isExpiredContest ? "Contest Ended" : "Start Challenge"}
+                  {isExpiredContest ? "Contest Ended" : isPendingContest ? "Awaiting Approval" : "Start Challenge"}
                 </Button>
               </CardContent>
             </Card>
@@ -251,6 +261,23 @@ export function ContestSelectionHub() {
                   )}
                 </div>
               </div>
+
+              {/* Upcoming Contests (Pending Approval) */}
+              {filteredPendingContests.length > 0 && (
+                <div className="min-h-[100px] flex flex-col">
+                  <h3 className="text-sm font-semibold text-amber-500 mb-2">
+                    Upcoming Contests (Awaiting Approval)
+                  </h3>
+                  <div className="flex-1 overflow-hidden">
+                    <ContestList
+                      contests={filteredPendingContests}
+                      selectedContestId={selectedContest?.id || null}
+                      onSelectContest={handleSelectContest}
+                      emptyMessage="No pending contests"
+                    />
+                  </div>
+                </div>
+              )}
 
               {/* Expired Contests */}
               <div className="min-h-[150px] md:flex-1 md:min-h-0 flex flex-col">

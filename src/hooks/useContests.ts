@@ -4,6 +4,7 @@ import { Contest, ContestWithParticipants } from "@/types/contest";
 
 export function useContests() {
   const [activeContests, setActiveContests] = useState<ContestWithParticipants[]>([]);
+  const [pendingContests, setPendingContests] = useState<ContestWithParticipants[]>([]);
   const [expiredContests, setExpiredContests] = useState<ContestWithParticipants[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -17,24 +18,28 @@ export function useContests() {
         .eq('status', 'active')
         .lt('ends_at', new Date().toISOString());
 
-      // Fetch all contests that are approved (only approved contests visible to players)
-      const { data: contests, error } = await supabase
+      // Fetch all approved contests (visible to players)
+      const { data: approvedContests, error: approvedError } = await supabase
         .from('contests')
         .select('*')
         .eq('approval_status', 'approved')
         .order('ends_at', { ascending: true });
 
-      if (error) throw error;
+      if (approvedError) throw approvedError;
 
-      // Get participant counts for each contest
+      // Fetch pending contests (upcoming - awaiting approval)
+      const { data: pendingData, error: pendingError } = await supabase
+        .from('contests')
+        .select('*')
+        .eq('approval_status', 'pending')
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+
+      if (pendingError) throw pendingError;
+
+      // Get participant counts for approved contests
       const contestsWithCounts: ContestWithParticipants[] = await Promise.all(
-        (contests || []).map(async (contest) => {
-          const { count } = await supabase
-            .from('contest_scores')
-            .select('player_name', { count: 'exact', head: true })
-            .eq('contest_id', contest.id);
-
-          // Get unique participants by counting distinct player names
+        (approvedContests || []).map(async (contest) => {
           const { data: uniquePlayers } = await supabase
             .from('contest_scores')
             .select('player_name')
@@ -50,7 +55,15 @@ export function useContests() {
         })
       );
 
+      // Format pending contests
+      const pendingWithCounts: ContestWithParticipants[] = (pendingData || []).map(contest => ({
+        ...contest,
+        status: contest.status as 'active' | 'expired',
+        participant_count: 0
+      }));
+
       setActiveContests(contestsWithCounts.filter(c => c.status === 'active'));
+      setPendingContests(pendingWithCounts);
       setExpiredContests(contestsWithCounts.filter(c => c.status === 'expired'));
     } catch (error) {
       console.error('Error fetching contests:', error);
@@ -63,5 +76,5 @@ export function useContests() {
     fetchContests();
   }, [fetchContests]);
 
-  return { activeContests, expiredContests, loading, refetch: fetchContests };
+  return { activeContests, pendingContests, expiredContests, loading, refetch: fetchContests };
 }

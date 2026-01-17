@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, RotateCcw } from "lucide-react";
+import { AnnouncementOverlay } from "@/components/AnnouncementOverlay";
 import { GameState } from "@/types/game";
 import {
   generateDotsWithVariableDensity,
@@ -245,6 +246,7 @@ export default function SinglePlayerGame() {
 
   return (
     <div className="min-h-screen bg-background p-2 sm:p-4 relative">
+      <AnnouncementOverlay targetScreen="single-player-game" />
       <Button
         variant="ghost"
         size="icon"

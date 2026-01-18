@@ -226,10 +226,11 @@ export function ContestSelectionHub() {
           </div>
 
           {/* Right Column - 60% */}
-          <Card className="md:col-span-3 border-2 border-border flex flex-col overflow-hidden max-h-[400px] md:max-h-none">
-            <CardContent className="flex-1 flex flex-col gap-4 p-4 overflow-hidden">
+          {/* Right Column - 60% - Extended panel for mobile */}
+          <Card className="md:col-span-3 border-2 border-border flex flex-col overflow-hidden max-h-[70vh] md:max-h-none">
+            <CardContent className="flex-1 flex flex-col gap-3 p-4 overflow-hidden">
               {/* Search */}
-              <div className="relative">
+              <div className="relative flex-shrink-0">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Search contests..."
@@ -239,12 +240,12 @@ export function ContestSelectionHub() {
                 />
               </div>
 
-              {/* Currently Running */}
-              <div className="min-h-[150px] md:flex-1 md:min-h-0 flex flex-col">
-                <h3 className="text-sm font-semibold text-muted-foreground mb-2">
+              {/* Currently Running - Guaranteed visibility for 3 contests */}
+              <div className="min-h-[220px] md:min-h-[200px] flex-shrink-0 flex flex-col">
+                <h3 className="text-sm font-semibold text-muted-foreground mb-2 flex-shrink-0">
                   Currently Running
                 </h3>
-                <div className="flex-1 overflow-hidden">
+                <div className="flex-1 overflow-auto">
                   {loading ? (
                     <div className="flex items-center justify-center py-8">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -262,13 +263,13 @@ export function ContestSelectionHub() {
                 </div>
               </div>
 
-              {/* Upcoming Contests (Pending Approval) */}
+              {/* Upcoming Contests (Pending Approval) - Capped height */}
               {filteredPendingContests.length > 0 && (
-                <div className="min-h-[100px] flex flex-col">
-                  <h3 className="text-sm font-semibold text-amber-500 mb-2">
+                <div className="max-h-[120px] md:max-h-[150px] flex-shrink-0 flex flex-col">
+                  <h3 className="text-sm font-semibold text-amber-500 mb-2 flex-shrink-0">
                     Upcoming Contests (Awaiting Approval)
                   </h3>
-                  <div className="flex-1 overflow-hidden">
+                  <div className="flex-1 overflow-auto">
                     <ContestList
                       contests={filteredPendingContests}
                       selectedContestId={selectedContest?.id || null}
@@ -279,12 +280,12 @@ export function ContestSelectionHub() {
                 </div>
               )}
 
-              {/* Expired Contests */}
-              <div className="min-h-[150px] md:flex-1 md:min-h-0 flex flex-col">
-                <h3 className="text-sm font-semibold text-muted-foreground mb-2">
+              {/* Expired Contests - Fills remaining space */}
+              <div className="min-h-[180px] flex-1 flex flex-col overflow-hidden">
+                <h3 className="text-sm font-semibold text-muted-foreground mb-2 flex-shrink-0">
                   Expired Contests
                 </h3>
-                <div className="flex-1 overflow-hidden">
+                <div className="flex-1 overflow-auto">
                   <ContestList
                     contests={filteredExpiredContests}
                     selectedContestId={selectedContest?.id || null}
